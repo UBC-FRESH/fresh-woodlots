@@ -21,6 +21,19 @@ python3 scripts/calibrate_all.py --jobs 8
 echo "[3/7] FHOPS for built instances without summaries"
 python3 scripts/batch_fhops.py --jobs 8
 
+if [[ "${RUN_FEATURED_TENYEAR:-0}" == "1" ]]; then
+  echo "[3b/7] ten-year FHOPS for featured pilots"
+  python3 scripts/build_fhops_tenyear.py \
+    --only wl-w1548 --only wl-w2023 --iterations 800
+fi
+
+if [[ "${RUN_FEATURED_PARETO:-0}" == "1" ]]; then
+  echo "[3c/7] Pareto sweeps for featured pilots"
+  python3 scripts/build_pareto_sweep.py \
+    --only wl-w1548 --only wl-w2023 \
+    --factors 0.85,1.00,1.15 --seeds 1 --iterations 30
+fi
+
 echo "[4/7] regenerate scenarios for all built instances"
 python3 scripts/prepare_demo.py
 
