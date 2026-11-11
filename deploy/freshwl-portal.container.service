@@ -1,0 +1,42 @@
+[Unit]
+Description=Woodlots BC Planning Portal (LXD container)
+Documentation=file:///srv/shared-data/gep/ws4/fresh-woodlots/docs/PUBLIC-HOSTING-PLAN.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=gep
+Group=gep
+WorkingDirectory=/srv/shared-data/gep/ws4/fresh-woodlots
+Environment=PYTHONPATH=/srv/shared-data/gep/ws4/ws4-public-demo:/srv/shared-data/gep/ws4/fresh-woodlots
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=PUBLIC_READ_ONLY=0
+Environment=DEMO_MODE=1
+Environment=WS4_OVERVIEW_ZOOM=0
+ExecStart=/home/gep/.venv/bin/uvicorn portal.app:app --host 127.0.0.1 --port 8795 --workers 1
+Restart=always
+RestartSec=3
+TimeoutStopSec=30
+
+MemoryMax=8G
+CPUQuota=400%
+TasksMax=256
+LimitNOFILE=65536
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=false
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+LockPersonality=true
+UMask=0077
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

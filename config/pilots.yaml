@@ -1,0 +1,100 @@
+pilots:
+- slug: wl-w0026
+  file_id: W0026
+  label: CHINOOK WOODLOTS LTD.
+  rationale: Featured woodlot pilot.
+  species_code_overrides:
+    HW: HWI
+    H: HWI
+    DR: FDC
+    FDC: FDC
+    FDI: FDI
+    SX: SW
+    SW: SW
+    SE: SW
+    SB: SW
+    SS: SS
+    PL: PLI
+    PY: PLI
+    CW: CW
+    NC: NC
+    AT: AT
+    AC: AT
+    ACT: AT
+    EP: AT
+    WB: AT
+    BW: AT
+    MB: AT
+    BL: AT
+    BG: AT
+    RA: AT
+    OA: AT
+    OB: AT
+    E: AT
+    U: AT
+- slug: wl-w2023
+  file_id: W2023
+  label: BOOMER ENTERPRISES LTD.
+  rationale: Featured woodlot pilot.
+  species_code_overrides:
+    HW: HWI
+    H: HWI
+    DR: FDC
+    FDC: FDC
+    FDI: FDI
+    SX: SW
+    SW: SW
+    SE: SW
+    SB: SW
+    SS: SS
+    PL: PLI
+    PY: PLI
+    CW: CW
+    NC: NC
+    AT: AT
+    AC: AT
+    ACT: AT
+    EP: AT
+    WB: AT
+    BW: AT
+    MB: AT
+    BL: AT
+    BG: AT
+    RA: AT
+    OA: AT
+    OB: AT
+    E: AT
+    U: AT
+- slug: wl-w1548
+  file_id: W1548
+  label: FIBRE FARMS INC.
+  rationale: Featured woodlot pilot.
+  species_code_overrides:
+    HW: HWI
+    H: HWI
+    DR: FDC
+    FDC: FDC
+    FDI: FDI
+    SX: SW
+    SW: SW
+    SE: SW
+    SB: SW
+    SS: SS
+    PL: PLI
+    PY: PLI
+    CW: CW
+    NC: NC
+    AT: AT
+    AC: AT
+    ACT: AT
+    EP: AT
+    WB: AT
+    BW: AT
+    MB: AT
+    BL: AT
+    BG: AT
+    RA: AT
+    OA: AT
+    OB: AT
+    E: AT
+    U: AT

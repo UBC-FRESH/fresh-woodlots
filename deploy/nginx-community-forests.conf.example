@@ -1,0 +1,89 @@
+# Example nginx site for the BC Community Forest Planning Portal.
+# Replace the hostname, certificate paths, and upstream if needed.
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name communityforests.fresh.ubc.ca;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    http2 on;
+    server_name communityforests.fresh.ubc.ca;
+
+    ssl_certificate     /etc/letsencrypt/live/communityforests.fresh.ubc.ca/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/communityforests.fresh.ubc.ca/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers off;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 1d;
+
+    add_header Strict-Transport-Security "max-age=31536000" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
+
+    client_max_body_size 1m;
+    limit_conn cf_conn 20;
+
+    gzip on;
+    gzip_types application/json application/geo+json application/javascript
+               text/css text/plain image/svg+xml;
+
+    access_log /var/log/nginx/community-forests.access.log;
+    error_log  /var/log/nginx/community-forests.error.log warn;
+
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_connect_timeout 10s;
+    proxy_read_timeout 60s;
+    proxy_send_timeout 60s;
+
+    # Block write and assistant routes under every mounted instance.
+    location ~ ^/instance/[^/]+/api/(chat|agent|targets|runs) {
+        return 403;
+    }
+
+    # Public instances are read-only.
+    location /instance/ {
+        limit_except GET HEAD { deny all; }
+        proxy_pass http://127.0.0.1:8795;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    location /api/ {
+        limit_req zone=cf_api burst=10 nodelay;
+        add_header Cache-Control "no-store" always;
+        proxy_pass http://127.0.0.1:8795;
+    }
+
+    location = /api/geojson/cfa {
+        limit_req zone=cf_api burst=5 nodelay;
+        expires 1h;
+        add_header Cache-Control "public, max-age=3600" always;
+        proxy_pass http://127.0.0.1:8795;
+    }
+
+    location /static/ {
+        proxy_pass http://127.0.0.1:8795;
+        expires 7d;
+        add_header Cache-Control "public, max-age=604800" always;
+    }
+
+    location ~ ^/instance/[^/]+/static/ {
+        proxy_pass http://127.0.0.1:8795;
+        expires 7d;
+        add_header Cache-Control "public, max-age=604800" always;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:8795;
+    }
+}

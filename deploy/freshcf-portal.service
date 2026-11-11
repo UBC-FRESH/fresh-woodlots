@@ -1,0 +1,42 @@
+[Unit]
+Description=BC Community Forest Planning Portal
+Documentation=file:///srv/shared-data/gep/ws4/fresh-community-forests/docs/PUBLIC-HOSTING-PLAN.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=freshcf
+Group=freshcf
+WorkingDirectory=/srv/shared-data/gep/ws4/fresh-community-forests
+Environment=PYTHONPATH=/srv/shared-data/gep/ws4/fresh-community-forests
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=PUBLIC_READ_ONLY=1
+ExecStart=/opt/freshcf/venv/bin/uvicorn portal.app:app --host 127.0.0.1 --port 8796 --workers 1
+Restart=always
+RestartSec=3
+TimeoutStopSec=30
+
+MemoryMax=8G
+CPUQuota=400%
+TasksMax=256
+LimitNOFILE=65536
+
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadOnlyPaths=/srv/shared-data/gep/ws4/fresh-community-forests
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+LockPersonality=true
+UMask=0077
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

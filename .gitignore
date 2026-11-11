@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+
+# Generated data
+data/downloads/
+data/tipsy/
+data/boundaries/*.gpkg
+data/boundaries/*.geojson
+!data/boundaries/.gitkeep
+data/catalog/*.json
+!data/catalog/README.md
+
+# Pilot instance build artifacts
+instances/*
+!instances/.gitkeep
+instances/*/data/
+instances/*/output/
+instances/*/outputs/
+instances/*/plots/
+instances/*/runtime/
+instances/*/tipsy_io/
+instances/*/vdyp_io/
+instances/*/ws4/build/
+instances/*/ws4/runs/
+instances/*/ws4/geometry/
+
+# Local notes and secrets
+notes/local/
+.env
+*.pem
+
+# Portal log
+portal/portal.log
+
+# Batch logs
+batch/logs/
+batch/repair/
