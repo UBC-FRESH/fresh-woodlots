@@ -1,0 +1,3 @@
+/* Small readability adjustments for the tech docs. */
+.wy-table-responsive table td, .wy-table-responsive table th { white-space: normal; }
+.rst-content code.literal { font-size: 0.88em; }

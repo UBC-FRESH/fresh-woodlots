@@ -1,0 +1,46 @@
+Woodlots BC Planning Portal
+===========================
+
+A free, public-data planning portal for BC woodlot licences. The portal combines
+one WS4 strategic planning instance per woodlot with a first-period FHOPS
+operational pilot, a searchable public-data catalogue, and a scenario-based web
+UI.
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Overview
+
+   overview
+   project-brief
+   architecture
+   roadmap
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Data and AAC
+
+   data-sources
+   aac/W0026-AAC-DOSSIER
+   DOCUMENT-LIBRARY
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Models and tools
+
+   W4W-WINE
+   api
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Operations
+
+   PUBLIC-HOSTING-PLAN
+   WOODLOTS-HANDOFF
+   deployment
+
+Indices and tables
+------------------
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

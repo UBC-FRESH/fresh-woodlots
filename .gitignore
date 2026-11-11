@@ -44,3 +44,6 @@ portal/portal.log
 # Batch logs
 batch/logs/
 batch/repair/
+
+# Sphinx build output
+docs/_build/
