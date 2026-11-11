@@ -22,6 +22,7 @@ UI.
    data-sources
    aac/W0026-AAC-DOSSIER
    DOCUMENT-LIBRARY
+   library/woodlot-INDEX
 
 .. toctree::
    :maxdepth: 2

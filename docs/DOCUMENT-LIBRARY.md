@@ -26,7 +26,7 @@ python scripts/build_doc_library.py
 | `raw/woodlot-specific/W0026/` | W0026 WLP, WLP extension, cut-control statement, AAC dossier |
 | `text/` | Extracted text for search (PDFs, DOC/DOCX, XLS/XLSX, HTML) |
 | `pages/` | Source HTML and text for the two BC government pages |
-| `INDEX.md` | Human-readable index with source URLs |
+| `INDEX.md` | Human-readable index with source URLs (also published at `library/woodlot-INDEX`) |
 | `index.json` | Machine-readable manifest: URL, path, SHA256, MIME type, extraction status |
 
 ## Search
