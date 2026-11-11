@@ -2,7 +2,8 @@
 """Prepare the demo surfaces for every built woodlot instance.
 
 - archives the old ``pre_*`` runs so the WS4 UI opens the current AAC baseline
-- writes three saved target scenarios: baseline, high, and conservative
+- writes four saved target scenarios: baseline, W4W published AAC, high, and
+  conservative
 """
 
 from __future__ import annotations
@@ -120,6 +121,21 @@ def main(argv: list[str] | None = None) -> int:
             name="AAC baseline (1.2x)",
             description="The public AAC band used for the 100-year baseline.",
             targets=targets,
+            now=now,
+        )
+        w4w_targets: list[dict[str, object]] = []
+        for row in targets:
+            item = dict(row)
+            floor = item.get("minimum")
+            if isinstance(floor, (int, float)):
+                item["maximum"] = floor
+            w4w_targets.append(item)
+        _write_scenario(
+            root=scenarios,
+            slug="w4w",
+            name="W4W published AAC (1.0x)",
+            description="Target equal to the public AAC, without the 1.2x uplift.",
+            targets=w4w_targets,
             now=now,
         )
         _write_scenario(

@@ -21,6 +21,8 @@ The missing W0026-specific documents are therefore:
 4. the **Schedule A / Schedule B area and volume allocation** used in the calculation;
 5. any management-plan amendments that changed the AAC.
 
+A reverse-engineered W4W input set that reproduces the published 7,311 m³/year is in `W0026-W4W-CALIBRATION.md`.
+
 ## What is public and verified
 
 ### 1. The AAC is 7,311 m³/year

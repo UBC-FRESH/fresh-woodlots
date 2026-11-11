@@ -21,6 +21,7 @@ UI.
 
    data-sources
    aac/W0026-AAC-DOSSIER
+   aac/W0026-W4W-CALIBRATION
    DOCUMENT-LIBRARY
    library/woodlot-INDEX
 
