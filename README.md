@@ -34,6 +34,35 @@ The source of truth is the public BC data:
 - The portal runs on **port 8795**; the BCCFA portal remains on 8796 and
   Nemora remains on 8799.
 
+## Tech docs
+
+Sphinx documentation is published at:
+
+<https://ubc-fresh.github.io/fresh-woodlots/>
+
+Source is in `docs/`; the GitHub Actions workflow at
+`.github/workflows/docs.yml` builds and deploys it with GitHub Pages.
+
+## Document library
+
+A local, searchable library of the BC woodlot documents is in
+`data/library/woodlot/` (59 records, extracted text, SHA256 manifest):
+
+```bash
+python scripts/search_doc_library.py --query "allowable annual cut"
+```
+
+## Woodlot for Windows under Wine
+
+Woodlot for Windows 4.4 is installed in `data/wine/woodlot` and runs under
+Wine 11 + Wine Mono 11.3.0:
+
+```bash
+DISPLAY=:99 scripts/run_woodlot_wine.sh
+```
+
+See `docs/W4W-WINE.md` for install and caveats.
+
 ## Quick start
 
 ```bash
