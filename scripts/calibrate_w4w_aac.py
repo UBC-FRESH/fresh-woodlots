@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Calibrate a simplified Woodlot-for-Windows-style AAC for W0026.
+"""Calibrate a simplified Woodlot-for-Windows-style AAC for one woodlot.
 
 The model is deliberately simple and transparent:
 
@@ -9,9 +9,9 @@ The model is deliberately simple and transparent:
 - clearcut/regrowth with a minimum harvest age;
 - a single multiplicative THLB factor.
 
-The published W0026 AAC is 7,311 m3/year. We solve for the THLB factor that
-makes the simplified model produce that rate, and report the implied net area
-against the public areas.
+The published AAC is the target. We solve for the THLB factor that makes the
+simplified model produce that rate, and report the implied net area against the
+public areas. This is a calibration, not a statutory AAC calculation.
 """
 
 from __future__ import annotations
@@ -25,13 +25,7 @@ import numpy as np
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-INSTANCE = REPO_ROOT / "instances" / "wl-w0026"
-COMPILED = INSTANCE / "ws4" / "build" / "compiled"
-AAC = 7311.0
-AAC_AREA = 1110.0
-AOI = 1027.92
-PROXY_THLB = 667.38
-GROSS_VRI = 732.48
+QUEUE_PATH = REPO_ROOT / "queue" / "woodlot_build_queue.json"
 
 
 @dataclass
@@ -48,10 +42,10 @@ class Block:
         return float(np.interp(age, self.x, self.y, left=0.0, right=float(self.y[-1])))
 
 
-def load_blocks(include_unmanaged: bool = True) -> list[Block]:
-    fragments = pd.read_parquet(COMPILED / "fragments.parquet")
-    features = pd.read_parquet(COMPILED / "features.parquet")
-    curves = pd.read_parquet(COMPILED / "curves.parquet")
+def load_blocks(compiled: Path, include_unmanaged: bool = True) -> list[Block]:
+    fragments = pd.read_parquet(compiled / "fragments.parquet")
+    features = pd.read_parquet(compiled / "features.parquet")
+    curves = pd.read_parquet(compiled / "curves.parquet")
     managed = (
         features[features["label"] == "feature.Yield.managed.Total"]
         .drop_duplicates("track_id")
@@ -146,88 +140,136 @@ def max_even_flow(
 def run_case(
     blocks: list[Block],
     *,
+    aac: float,
+    aac_area: float,
+    aoi: float,
+    proxy_thlb: float,
+    gross_vri: float,
     horizon: int,
     width: int,
     min_age: int,
     base_area: float,
 ) -> dict[str, object]:
     vmax = max_even_flow(blocks, horizon=horizon, width=width, min_age=min_age)
-    factor = AAC / vmax if vmax > 0 else float("nan")
+    factor = aac / vmax if vmax > 0 else float("nan")
     net_area = factor * base_area
     return {
         "base_area_ha": round(base_area, 2),
         "max_even_flow_m3_per_year": round(vmax, 1),
         "thlb_factor": round(factor, 4),
         "net_area_ha": round(net_area, 2),
-        "netdown_vs_aac_area": round(net_area / AAC_AREA, 4),
-        "netdown_vs_aoi": round(net_area / AOI, 4),
-        "netdown_vs_proxy_thlb": round(net_area / PROXY_THLB, 4),
-        "netdown_vs_gross_vri": round(net_area / GROSS_VRI, 4),
+        "netdown_vs_aac_area": round(net_area / aac_area, 4) if aac_area else None,
+        "netdown_vs_aoi": round(net_area / aoi, 4) if aoi else None,
+        "netdown_vs_proxy_thlb": round(net_area / proxy_thlb, 4) if proxy_thlb else None,
+        "netdown_vs_gross_vri": round(net_area / gross_vri, 4) if gross_vri else None,
     }
+
+
+def resolve_instance(slug: str, instance_root: Path | None) -> tuple[Path, dict[str, object]]:
+    entries = json.loads(QUEUE_PATH.read_text(encoding="utf-8")).get("instances", [])
+    entry = next((item for item in entries if item.get("slug") == slug), None)
+    if entry is None:
+        raise SystemExit(f"slug not in queue: {slug}")
+    root = instance_root or (REPO_ROOT / "instances" / slug)
+    return root, entry
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--slug", default="wl-w0026")
+    parser.add_argument("--instance-root", type=Path, default=None)
     parser.add_argument("--horizon", type=int, default=250)
     parser.add_argument("--width", type=int, default=5)
     parser.add_argument("--min-age", type=int, default=40)
-    parser.add_argument(
-        "--out",
-        type=Path,
-        default=REPO_ROOT / "data" / "aac" / "w0026",
-    )
+    parser.add_argument("--quick", action="store_true", help="run only the headline case")
+    parser.add_argument("--write-docs", action="store_true")
+    parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args(argv)
 
-    all_blocks = load_blocks(include_unmanaged=True)
-    managed_blocks = load_blocks(include_unmanaged=False)
+    root, entry = resolve_instance(args.slug, args.instance_root)
+    compiled = root / "ws4" / "build" / "compiled"
+    if not (compiled / "fragments.parquet").is_file():
+        raise SystemExit(f"no compiled dataset: {compiled}")
+    aac = float(entry.get("aac_m3") or 0)
+    if aac <= 0:
+        raise SystemExit(f"no positive AAC for {args.slug}")
+    aac_area = float(entry.get("aac_area_ha") or 0)
+    aoi = float(entry.get("area_ha") or 0)
+    thlb_summary = root / "data" / "source" / "thlb" / "thlb.summary.json"
+    proxy_thlb = 0.0
+    if thlb_summary.is_file():
+        proxy_thlb = float(json.loads(thlb_summary.read_text()).get("thlb_ha") or 0)
+
+    all_blocks = load_blocks(compiled, include_unmanaged=True)
+    managed_blocks = load_blocks(compiled, include_unmanaged=False)
     all_area = float(sum(block.area_ha for block in all_blocks))
     managed_area = float(sum(block.area_ha for block in managed_blocks))
 
-    cases: dict[str, object] = {}
-    cases["all_vri"] = run_case(
-        all_blocks,
-        horizon=args.horizon,
-        width=args.width,
-        min_age=args.min_age,
-        base_area=all_area,
-    )
-    cases["managed_thlb"] = run_case(
-        managed_blocks,
-        horizon=args.horizon,
-        width=args.width,
-        min_age=args.min_age,
-        base_area=managed_area,
-    )
+    cases: dict[str, object] = {
+        "all_vri": run_case(
+            all_blocks,
+            aac=aac,
+            aac_area=aac_area,
+            aoi=aoi,
+            proxy_thlb=proxy_thlb,
+            gross_vri=all_area,
+            horizon=args.horizon,
+            width=args.width,
+            min_age=args.min_age,
+            base_area=all_area,
+        )
+    }
+    if not args.quick:
+        cases["managed_thlb"] = run_case(
+            managed_blocks,
+            aac=aac,
+            aac_area=aac_area,
+            aoi=aoi,
+            proxy_thlb=proxy_thlb,
+            gross_vri=all_area,
+            horizon=args.horizon,
+            width=args.width,
+            min_age=args.min_age,
+            base_area=managed_area,
+        )
 
     sensitivity = []
-    for name, blocks, base in (
-        ("all_vri", all_blocks, all_area),
-        ("managed_thlb", managed_blocks, managed_area),
-    ):
-        for min_age in (40, 60, 80):
-            for width in (5, 10):
-                result = run_case(
-                    blocks,
-                    horizon=args.horizon,
-                    width=width,
-                    min_age=min_age,
-                    base_area=base,
-                )
-                sensitivity.append(
-                    {
-                        "model": name,
-                        "min_age": min_age,
-                        "width": width,
-                        **result,
-                    }
-                )
+    if not args.quick:
+        for name, blocks, base in (
+            ("all_vri", all_blocks, all_area),
+            ("managed_thlb", managed_blocks, managed_area),
+        ):
+            for min_age in (40, 60, 80):
+                for width in (5, 10):
+                    sensitivity.append(
+                        {
+                            "model": name,
+                            "min_age": min_age,
+                            "width": width,
+                            **run_case(
+                                blocks,
+                                aac=aac,
+                                aac_area=aac_area,
+                                aoi=aoi,
+                                proxy_thlb=proxy_thlb,
+                                gross_vri=all_area,
+                                horizon=args.horizon,
+                                width=width,
+                                min_age=min_age,
+                                base_area=base,
+                            ),
+                        }
+                    )
 
     payload = {
-        "instance": "wl-w0026",
-        "published_aac_m3_per_year": AAC,
-        "aac_area_ha": AAC_AREA,
-        "aoi_ha": AOI,
-        "proxy_thlb_ha": PROXY_THLB,
+        "schema_version": 1,
+        "slug": args.slug,
+        "file_id": entry.get("file_id"),
+        "display_name": entry.get("display_name"),
+        "published_aac_m3_per_year": aac,
+        "aac_area_ha": aac_area,
+        "aoi_ha": aoi,
+        "proxy_thlb_ha": proxy_thlb,
         "gross_vri_fragment_ha": round(all_area, 2),
         "managed_fragment_ha": round(managed_area, 2),
         "assumptions": {
@@ -243,9 +285,16 @@ def main(argv: list[str] | None = None) -> int:
         },
         "cases": cases,
         "sensitivity": sensitivity,
+        "interpretation": (
+            "The published AAC is reproduced by scaling the gross VRI fragment "
+            "area by the all-vri THLB factor. This is a simplified W4W replica, "
+            "not a statutory AAC calculation."
+        ),
     }
-    args.out.mkdir(parents=True, exist_ok=True)
-    (args.out / "w4w_calibration.json").write_text(
+
+    out = args.out or (root / "config")
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "w4w_calibration.json").write_text(
         json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
 
@@ -267,11 +316,55 @@ def main(argv: list[str] | None = None) -> int:
                 "calibrated_net_area_ha": round(block.area_ha * factor, 4),
             }
         )
-    pd.DataFrame(table).to_csv(args.out / "w4w_plausible_inputs.csv", index=False)
+    pd.DataFrame(table).to_csv(out / "w4w_plausible_inputs.csv", index=False)
 
-    print(json.dumps(payload, indent=2, sort_keys=True)[:6000])
-    print(f"\nWrote {args.out / 'w4w_calibration.json'}")
-    print(f"Wrote {args.out / 'w4w_plausible_inputs.csv'}")
+    if args.write_docs:
+        lines = [
+            f"# {args.slug} — W4W base-scenario rationale",
+            "",
+            "## Published AAC",
+            "",
+            f"**{aac:,.0f} m³/year** for `{entry.get('file_id')}` "
+            f"({entry.get('display_name')}).",
+            "",
+            "## Calibration",
+            "",
+            "The simplified W4W replica uses oldest-first priority, a 250-year "
+            "constant even-flow target, 5-year periods, minimum harvest age 40, "
+            "and clearcut/regrowth with the WS4 compiled yield curves.",
+            "",
+            "| Input | Value |",
+            "|---|---:|",
+            f"| Gross VRI fragments | {all_area:,.2f} ha |",
+            f"| Max even flow at factor 1.0 | "
+            f"{recommended['max_even_flow_m3_per_year']:,.1f} m³/yr |",
+            f"| Calibrated THLB factor | {factor:.4f} |",
+            f"| Calibrated net area | {recommended['net_area_ha']:,.2f} ha |",
+            f"| Published AAC / net area | {aac / recommended['net_area_ha']:,.2f} m³/ha/yr |",
+            f"| Net area vs AAC area | "
+            f"{recommended['netdown_vs_aac_area']:.1%} |",
+            f"| Net area vs AOI | {recommended['netdown_vs_aoi']:.1%} |",
+            f"| Net area vs Proxy THLB | "
+            f"{recommended['netdown_vs_proxy_thlb'] or 0:.1%} |",
+            "",
+            "## Caveats",
+            "",
+            "This is a simplified calibration, not the actual Woodlot for Windows "
+            "project. It does not model partial cutting, roads, private land, or "
+            "all W4W constraints. The factor absorbs those differences. A real "
+            "W4W project file or management plan would supersede this.",
+            "",
+            "The portal scenario `W4W published AAC (1.0×)` applies the published "
+            "AAC as a target without the 1.2× uplift.",
+        ]
+        (out / "W4W-CALIBRATION.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    print(
+        f"{args.slug}: AAC={aac:.0f}, all-area={all_area:.2f} ha, "
+        f"Vmax={recommended['max_even_flow_m3_per_year']:.1f}, "
+        f"factor={factor:.4f}, net={recommended['net_area_ha']:.2f} ha"
+    )
+    print(f"Wrote {out / 'w4w_calibration.json'}")
     return 0
 
 

@@ -62,6 +62,7 @@ class Instance:
     mount: str = ""
     partial: bool = False
     fhops: dict[str, object] | None = None
+    w4w: dict[str, object] | None = None
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -80,6 +81,7 @@ class Instance:
             "mount": self.mount,
             "partial": self.partial,
             "fhops": self.fhops,
+            "w4w": self.w4w,
         }
 
 
@@ -185,6 +187,7 @@ def discover() -> list[Instance]:
         subtitle = spec["subtitle"] if spec else "Woodlot licence"
         thlb: dict[str, Any] = {}
         fhops: dict[str, Any] | None = None
+        w4w: dict[str, Any] | None = None
         runs: list[str] = []
         dataset = root / "ws4" / "build" / "compiled"
         ready = False
@@ -193,6 +196,16 @@ def discover() -> list[Instance]:
                 root / "data" / "source" / "thlb" / "thlb.summary.json"
             )
             fhops = _read_json(root / "fhops" / "summary.json") or None
+            w4w_payload = _read_json(root / "config" / "w4w_calibration.json")
+            if w4w_payload:
+                case = (w4w_payload.get("cases") or {}).get("all_vri") or {}
+                w4w = {
+                    "aac_m3": w4w_payload.get("published_aac_m3_per_year"),
+                    "net_area_ha": case.get("net_area_ha"),
+                    "thlb_factor": case.get("thlb_factor"),
+                    "max_even_flow_m3": case.get("max_even_flow_m3_per_year"),
+                    "pct_proxy_thlb": case.get("netdown_vs_proxy_thlb"),
+                }
             runs_root = root / "ws4" / "runs"
             if runs_root.exists():
                 runs = sorted(
@@ -244,6 +257,7 @@ def discover() -> list[Instance]:
                 reason=reason,
                 partial=str(row.get("bundle", "")).lower() == "partial",
                 fhops=fhops,
+                w4w=w4w,
             )
         )
     return instances
@@ -526,6 +540,26 @@ async def woodlot_geojson() -> FileResponse | JSONResponse:
     return FileResponse(path, media_type="application/geo+json")
 
 
+@app.get("/rationale/{slug}", response_class=HTMLResponse)
+async def rationale(slug: str) -> HTMLResponse:
+    if slug not in _queue_rows():
+        return HTMLResponse("unknown woodlot", status_code=404)
+    path = INSTANCES_ROOT / slug / "config" / "W4W-CALIBRATION.md"
+    if not path.is_file():
+        return HTMLResponse("no W4W calibration yet", status_code=404)
+    text = html.escape(path.read_text(encoding="utf-8"))
+    return HTMLResponse(
+        f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
+        <title>W4W rationale · {html.escape(slug)}</title>
+        <style>body{{font:16px/1.5 system-ui,sans-serif;max-width:900px;
+        margin:2rem auto;padding:0 1rem;color:#17231f;background:#f7faf7}}
+        pre{{white-space:pre-wrap;background:#fff;border:1px solid #d8e0db;
+        padding:1rem;border-radius:10px}} a{{color:#6b4f2a}}</style></head>
+        <body><p><a href="/instance/{html.escape(slug)}/">← back to model</a></p>
+        <pre>{text}</pre></body></html>"""
+    )
+
+
 @app.get("/static/map.js")
 async def map_js() -> FileResponse:
     return FileResponse(
@@ -555,6 +589,20 @@ def _card(instance: Instance) -> str:
         )
     else:
         fhops = "not run"
+    w4w_text = ""
+    w4w_link = ""
+    if instance.w4w:
+        w4w_text = (
+            f"{instance.w4w.get('net_area_ha', '—')} ha net, "
+            f"factor {instance.w4w.get('thlb_factor', '—')}, "
+            f"{instance.w4w.get('pct_proxy_thlb', 0):.0%} of Proxy THLB"
+        )
+        w4w_link = f'<a href="/rationale/{instance.slug}">W4W rationale</a>'
+    w4w_row = (
+        f'<p class="runs">W4W: {html.escape(w4w_text)} · {w4w_link}</p>'
+        if w4w_text
+        else ""
+    )
     search = html.escape(
         f"{instance.file_id} {instance.label} {instance.subtitle}".lower()
     )
@@ -591,6 +639,7 @@ def _card(instance: Instance) -> str:
       </dl>
       <p class="runs">Runs: {html.escape(runs)}</p>
       <p class="runs">FHOPS: {html.escape(fhops)}</p>
+      {w4w_row}
       {link}
     </article>
     """

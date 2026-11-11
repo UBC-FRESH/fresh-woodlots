@@ -172,6 +172,11 @@ ws4 report \
   --run ws4/runs/aac_baseline \
   --targets config/targets/evenflow_aac.yaml || true
 
+echo "[9b/10] W4W base-scenario calibration"
+python3 "$ROOT/scripts/calibrate_w4w_aac.py" \
+  --slug "$SLUG" --quick --write-docs || \
+  echo "warning: W4W calibration failed for $SLUG"
+
 echo "[10/10] FHOPS operational pilot"
 if [[ -n "$AAC" ]] && command -v fhops >/dev/null 2>&1 && [[ "${SKIP_FHOPS:-0}" != "1" ]]; then
   python3 "$ROOT/scripts/build_fhops_pilot.py" \
