@@ -32,6 +32,15 @@ rg -n -i "allowable annual cut" data/library/woodlot/text
 | Woodlot for Windows 4.4 Installer | `raw/aac-tool/woodlot4.4.msi` | `` | https://www.for.gov.bc.ca/ftp/HTH/external/!publish/web/timber-tenures/woodlots/woodlot-for-windows/woodlot4.4.msi |
 | Woodlot for Windows 4.4 User Guide | `raw/aac-tool/Woodlot4UserGuide.pdf` | `text/aac-tool/Woodlot4UserGuide.txt` | https://www.for.gov.bc.ca/ftp/HTH/external/!publish/web/timber-tenures/woodlots/woodlot-for-windows/Woodlot4UserGuide.pdf |
 
+### benchmarks
+
+| Document | Local file | Text | Source |
+|---|---|---|---|
+| W0007 Woodlot Licence Harvest Planning Report (2001) | `raw/benchmarks/W0007-harvest-report-2012.pdf` | `text/benchmarks/W0007-harvest-report-2012.txt` | http://woodlot0007.ca/documents/W0007reportNov12.pdf |
+| W0007 Woodlot Management Plan #4 (2001) | `raw/benchmarks/W0007-management-plan-4.pdf` | `text/benchmarks/W0007-management-plan-4.txt` | http://www.woodlot0007.ca/documents/W0007planNov22.pdf |
+| W1674 Woodlot Management Plan #2 (2024) | `raw/benchmarks/W1674-management-plan-2.pdf` | `text/benchmarks/W1674-management-plan-2.txt` | https://crgl.ca/wp-content/uploads/2024/08/W1674-Woodlot_Management_Plan_2_Document_Public.pdf |
+| W1832 Woodlot Management Plan #1 (2000) | `raw/benchmarks/W1832-management-plan-1.pdf` | `text/benchmarks/W1832-management-plan-1.txt` | http://winlawwoodlot.ca/mwp/W1832_mp.pdf |
+
 ### cut-control
 
 | Document | Local file | Text | Source |

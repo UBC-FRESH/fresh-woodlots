@@ -24,6 +24,7 @@ python scripts/build_doc_library.py
 | `raw/first-nations/` | Consultation and information-sharing documents |
 | `raw/legislation/` | Forest Act, Woodlot Licence Regulation, Cut Control Regulation, FRPA, WLPPR, and related Acts |
 | `raw/woodlot-specific/W0026/` | W0026 WLP, WLP extension, cut-control statement, AAC dossier |
+| `raw/benchmarks/` | W1674, W1832, and W0007 management plans/reports used for land-base benchmarking |
 | `text/` | Extracted text for search (PDFs, DOC/DOCX, XLS/XLSX, HTML) |
 | `pages/` | Source HTML and text for the two BC government pages |
 | `INDEX.md` | Human-readable index with source URLs (also published at `library/woodlot-INDEX`) |
