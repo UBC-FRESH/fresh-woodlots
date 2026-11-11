@@ -9,6 +9,8 @@ __pycache__/
 .coverage
 
 # Generated data
+data/
+batch/
 data/downloads/
 data/tipsy/
 data/boundaries/*.gpkg
