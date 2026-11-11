@@ -17,6 +17,7 @@ from typing import Any
 
 from fastapi import FastAPI
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from markdown_it import MarkdownIt
 from ws4.web.app import create_app
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,6 +25,14 @@ PUBLIC_READ_ONLY = os.environ.get("PUBLIC_READ_ONLY", "0") == "1"
 DEMO_MODE = os.environ.get("DEMO_MODE", "0") == "1"
 INSTANCES_ROOT = ROOT / "instances"
 QUEUE_PATH = ROOT / "queue" / "woodlot_build_queue.json"
+MARKDOWN = (
+    MarkdownIt(
+        "commonmark",
+        {"html": False, "linkify": True, "typographer": True},
+    )
+    .enable("table")
+    .enable("strikethrough")
+)
 
 SPECS: dict[str, dict[str, str]] = {
     "wl-w0026": {
@@ -547,16 +556,38 @@ async def rationale(slug: str) -> HTMLResponse:
     path = INSTANCES_ROOT / slug / "config" / "W4W-CALIBRATION.md"
     if not path.is_file():
         return HTMLResponse("no W4W calibration yet", status_code=404)
-    text = html.escape(path.read_text(encoding="utf-8"))
+    body = MARKDOWN.render(path.read_text(encoding="utf-8"))
     return HTMLResponse(
         f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>W4W rationale · {html.escape(slug)}</title>
-        <style>body{{font:16px/1.5 system-ui,sans-serif;max-width:900px;
-        margin:2rem auto;padding:0 1rem;color:#17231f;background:#f7faf7}}
-        pre{{white-space:pre-wrap;background:#fff;border:1px solid #d8e0db;
-        padding:1rem;border-radius:10px}} a{{color:#6b4f2a}}</style></head>
-        <body><p><a href="/instance/{html.escape(slug)}/">← back to model</a></p>
-        <pre>{text}</pre></body></html>"""
+        <style>
+          :root {{ color-scheme: light; --ink:#17231f; --muted:#5b6b64;
+                   --line:#d8e0db; --paper:#f7faf7; --accent:#6b4f2a; }}
+          body {{ margin:0; color:var(--ink); background:var(--paper);
+                  font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif; }}
+          main {{ max-width:900px; margin:0 auto; padding:2rem 1.2rem 4rem; }}
+          a {{ color:var(--accent); }}
+          h1,h2,h3 {{ line-height:1.2; margin:1.6rem 0 .5rem; }}
+          h1 {{ font-size:clamp(1.8rem,4vw,2.6rem); }}
+          h2 {{ border-bottom:1px solid var(--line); padding-bottom:.3rem; }}
+          p,li {{ max-width:75ch; }}
+          table {{ border-collapse:collapse; width:100%; margin:1rem 0;
+                   background:#fff; font-size:.92rem; }}
+          th,td {{ border:1px solid var(--line); padding:.45rem .6rem;
+                   text-align:left; vertical-align:top; }}
+          th {{ background:#eef3ef; }}
+          code {{ background:#eef3ef; border-radius:4px; padding:.1rem .3rem; }}
+          pre {{ background:#fff; border:1px solid var(--line); border-radius:10px;
+                 padding:1rem; overflow-x:auto; }}
+          blockquote {{ margin:1rem 0; padding:.2rem 1rem;
+                        border-left:4px solid var(--accent); color:var(--muted);
+                        background:#fff; }}
+        </style></head>
+        <body><main>
+        <p><a href="/instance/{html.escape(slug)}/">← back to model</a></p>
+        {body}
+        </main></body></html>"""
     )
 
 
