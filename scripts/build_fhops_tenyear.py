@@ -46,6 +46,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--iterations", type=int, default=800)
     parser.add_argument("--season-days", type=int, default=180)
     parser.add_argument("--force", action="store_true")
+    parser.add_argument("--no-queue-writes", action="store_true")
     args = parser.parse_args(argv)
 
     payload = json.loads(args.queue.read_text(encoding="utf-8"))
@@ -75,7 +76,7 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"{slug}: ten-year plan already present")
                 continue
 
-        rate = max(0.05, float(aac) / (args.season_days * 4.0))
+        rate = max(0.05, float(aac) / max(1, args.season_days))
         log_path = REPO_ROOT / "batch" / "tenyear" / f"{slug}.log"
         log_path.parent.mkdir(parents=True, exist_ok=True)
         started = time.monotonic()
