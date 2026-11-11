@@ -47,6 +47,19 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="Override the computed horizon",
     )
+    parser.add_argument(
+        "--season-days",
+        type=int,
+        default=0,
+        help="Working days per year; 0 means every day is available",
+    )
+    parser.add_argument("--name", default=None, help="Scenario name override")
+    parser.add_argument(
+        "--target-volume",
+        type=float,
+        default=None,
+        help="Override the target volume; default AAC x period",
+    )
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args(argv)
 
@@ -84,7 +97,7 @@ def main(argv: list[str] | None = None) -> int:
         if int(block_id) in areas.index
     ]
     total_area = sum(area for _block, area in selected)
-    target_volume = args.aac * args.period
+    target_volume = args.target_volume or args.aac * args.period
     block_rows: list[dict[str, object]] = []
     for block_id, area in selected:
         volume = round(target_volume * area / total_area, 3)
@@ -118,11 +131,21 @@ def main(argv: list[str] | None = None) -> int:
         for machine_id, role, cost in MACHINES
     ]
     landing_rows = [{"id": LANDING, "daily_capacity": 2}]
-    calendar_rows = [
-        {"machine_id": machine_id, "day": day, "available": 1}
-        for machine_id, _role, _cost in MACHINES
-        for day in range(1, num_days + 1)
-    ]
+    calendar_rows: list[dict[str, object]] = []
+    for machine_id, _role, _cost in MACHINES:
+        if args.season_days > 0:
+            for year in range(math.ceil(num_days / 365)):
+                start = year * 365 + 1
+                end = min(num_days, start + args.season_days - 1)
+                for day in range(start, end + 1):
+                    calendar_rows.append(
+                        {"machine_id": machine_id, "day": day, "available": 1}
+                    )
+        else:
+            for day in range(1, num_days + 1):
+                calendar_rows.append(
+                    {"machine_id": machine_id, "day": day, "available": 1}
+                )
     rate_rows = [
         {
             "machine_id": machine_id,
@@ -162,7 +185,7 @@ def main(argv: list[str] | None = None) -> int:
         ["machine_id", "block_id", "rate"],
     )
     scenario = {
-        "name": f"{prefix} first AAC period",
+        "name": args.name or f"{prefix} first AAC period",
         "num_days": num_days,
         "start_date": "2026-01-01",
         "data": {
