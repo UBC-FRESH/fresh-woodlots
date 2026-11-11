@@ -43,6 +43,12 @@ Sphinx documentation is published at:
 Source is in `docs/`; the GitHub Actions workflow at
 `.github/workflows/docs.yml` builds and deploys it with GitHub Pages.
 
+## FHOPS pages
+
+Every built woodlot with a solved FHOPS pilot has a `/fhops/<slug>` page,
+a 3D harvest studio at `/fhops/<slug>/studio`, and a tree-scale theatre at
+`/fhops/<slug>/theatre`.
+
 ## Document library
 
 A local, searchable library of the BC woodlot documents is in

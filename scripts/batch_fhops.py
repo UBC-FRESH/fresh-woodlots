@@ -13,6 +13,7 @@ import json
 import math
 import re
 import subprocess
+import sys
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -242,6 +243,17 @@ def main(argv: list[str] | None = None) -> int:
         if (entry.get("fhops") or {}).get("status") == "failed"
     )
     print(f"FHOPS state: built={built} failed={failed}")
+    print("Building portal FHOPS maps and timelines...")
+    subprocess.run(
+        [sys.executable, str(REPO_ROOT / "scripts" / "prepare_fhops_maps.py")],
+        cwd=REPO_ROOT,
+        check=False,
+    )
+    subprocess.run(
+        [sys.executable, str(REPO_ROOT / "scripts" / "prepare_theatre.py")],
+        cwd=REPO_ROOT,
+        check=False,
+    )
     return 0
 
 

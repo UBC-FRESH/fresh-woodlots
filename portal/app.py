@@ -15,10 +15,14 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from markdown_it import MarkdownIt
 from ws4.web.app import create_app
+
+from .fhops_page import _fhops_page
+from .fhops_studio import render_studio
+from .fhops_theatre import render_theatre
 
 ROOT = Path(__file__).resolve().parents[1]
 PUBLIC_READ_ONLY = os.environ.get("PUBLIC_READ_ONLY", "0") == "1"
@@ -90,6 +94,7 @@ class Instance:
             "mount": self.mount,
             "partial": self.partial,
             "fhops": self.fhops,
+            "fhops_url": f"/fhops/{self.slug}" if self.fhops else None,
             "w4w": self.w4w,
         }
 
@@ -478,6 +483,7 @@ UBC FRESH project team.</p>
 """
 
 INSTANCES = discover()
+INSTANCE_BY_SLUG = {instance.slug: instance for instance in INSTANCES}
 MOUNTED_SLUGS: set[str] = set()
 
 
@@ -651,6 +657,22 @@ def _card(instance: Instance) -> str:
     else:
         link = ""
         badge = f'<span class="badge wait">{html.escape(instance.reason)}</span>'
+    actions: list[str] = []
+    if link:
+        actions.append(link)
+    if instance.fhops:
+        actions.append(
+            f'<a class="open secondary" href="/fhops/{html.escape(instance.slug)}">'
+            "Open FHOPS pilot</a>"
+        )
+    actions_html = (
+        f'<div class="actions">{"".join(actions)}</div>' if actions else ""
+    )
+    studio_link = (
+        f' · <a href="/fhops/{html.escape(instance.slug)}/studio">3D studio</a>'
+        if instance.fhops
+        else ""
+    )
     return f"""
     <article class="card{ ' featured' if featured else '' }" data-search="{search}">
       <header>
@@ -669,11 +691,100 @@ def _card(instance: Instance) -> str:
         <div><dt>WS4 blocks</dt><dd>{blocks}</dd></div>
       </dl>
       <p class="runs">Runs: {html.escape(runs)}</p>
-      <p class="runs">FHOPS: {html.escape(fhops)}</p>
+      <p class="runs">FHOPS: {html.escape(fhops)}{studio_link}</p>
       {w4w_row}
-      {link}
+      {actions_html}
     </article>
     """
+
+
+@app.get("/fhops/{slug}/theatre.json", response_model=None)
+async def fhops_theatre_data(slug: str) -> FileResponse:
+    instance = INSTANCE_BY_SLUG.get(slug)
+    if instance is None:
+        raise HTTPException(status_code=404, detail="unknown woodlot")
+    path = instance.root / "fhops" / "out" / "theatre.json"
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail="theatre data missing")
+    return FileResponse(path, media_type="application/json")
+
+
+@app.get("/fhops/{slug}/theatre", response_class=HTMLResponse)
+async def fhops_theatre(slug: str) -> HTMLResponse:
+    instance = INSTANCE_BY_SLUG.get(slug)
+    if instance is None:
+        raise HTTPException(status_code=404, detail="unknown woodlot")
+    return HTMLResponse(
+        render_theatre(
+            slug=instance.slug,
+            label=instance.label,
+            file_id=instance.file_id,
+            subtitle=instance.subtitle,
+        )
+    )
+
+
+@app.get("/fhops/{slug}/timeline.json", response_model=None)
+async def fhops_timeline(slug: str) -> FileResponse:
+    instance = INSTANCE_BY_SLUG.get(slug)
+    if instance is None:
+        raise HTTPException(status_code=404, detail="unknown woodlot")
+    path = instance.root / "fhops" / "out" / "timeline.json"
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail="timeline missing")
+    return FileResponse(path, media_type="application/json")
+
+
+@app.get("/fhops/{slug}/studio", response_class=HTMLResponse)
+async def fhops_studio(slug: str) -> HTMLResponse:
+    instance = INSTANCE_BY_SLUG.get(slug)
+    if instance is None:
+        raise HTTPException(status_code=404, detail="unknown woodlot")
+    return HTMLResponse(
+        render_studio(
+            slug=instance.slug,
+            label=instance.label,
+            file_id=instance.file_id,
+            subtitle=instance.subtitle,
+            summary=instance.fhops or {},
+            aac_m3=instance.aac_m3,
+        )
+    )
+
+
+@app.get("/fhops/{slug}", response_class=HTMLResponse)
+async def fhops_page(slug: str) -> HTMLResponse:
+    instance = INSTANCE_BY_SLUG.get(slug)
+    if instance is None:
+        raise HTTPException(status_code=404, detail="unknown woodlot")
+    return HTMLResponse(_fhops_page(instance))
+
+
+@app.get("/fhops/{slug}/scheduled.geojson", response_model=None)
+async def fhops_scheduled(slug: str) -> FileResponse:
+    instance = INSTANCE_BY_SLUG.get(slug)
+    if instance is None:
+        raise HTTPException(status_code=404, detail="unknown woodlot")
+    path = instance.root / "fhops" / "out" / "scheduled_blocks.geojson"
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail="scheduled block map missing")
+    return FileResponse(path, media_type="application/geo+json")
+
+
+@app.get("/fhops/{slug}/download/{name}", response_model=None)
+async def fhops_download(slug: str, name: str) -> FileResponse:
+    instance = INSTANCE_BY_SLUG.get(slug)
+    if instance is None:
+        raise HTTPException(status_code=404, detail="unknown woodlot")
+    from .fhops_page import FHOPS_DOWNLOADS
+
+    relative = FHOPS_DOWNLOADS.get(name)
+    if relative is None:
+        raise HTTPException(status_code=404, detail="unknown FHOPS file")
+    path = instance.root / "fhops" / relative
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail="FHOPS file missing")
+    return FileResponse(path, filename=path.name)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -744,9 +855,12 @@ async def landing() -> HTMLResponse:
           color: var(--muted); }}
     dd {{ margin: .1rem 0 0; font-weight: 650; }}
     .runs {{ margin: 0; color: var(--muted); font-size: .82rem; }}
-    .open {{ display: inline-block; margin-top: auto; padding: .6rem .9rem;
+    .actions {{ display: flex; gap: .5rem; flex-wrap: wrap; margin-top: auto; }}
+    .open {{ display: inline-block; padding: .6rem .9rem;
              text-align: center; border-radius: 9px; background: var(--accent);
              color: #fff; text-decoration: none; font-weight: 700; }}
+    .open.secondary {{ background: #fff; color: var(--accent);
+                       border: 1px solid var(--accent); }}
     footer {{ max-width: 1100px; margin: 0 auto; padding: 1.2rem 1.5rem 3rem;
               color: var(--muted); font-size: .82rem;
               border-top: 1px solid var(--line); }}

@@ -32,6 +32,7 @@ UI.
    :caption: Models and tools
 
    W4W-WINE
+   FHOPS
    api
 
 .. toctree::
