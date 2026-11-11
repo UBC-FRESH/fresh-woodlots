@@ -263,6 +263,25 @@ def main(argv: list[str] | None = None) -> int:
                 )
             )
         )
+        surrogate = None
+        if not entries:
+            candidates = (
+                ("AT",)
+                if species in BROADLEAF
+                else ("SW", "FDC", "PLI", "AT")
+            )
+            for candidate in candidates:
+                candidate_entries = _prefer_pnc(
+                    list(
+                        engine.catalog.search(
+                            CatalogQuery(species_code=candidate, format="tab")
+                        )
+                    )
+                )
+                if candidate_entries:
+                    entries = candidate_entries
+                    surrogate = candidate
+                    break
         try:
             entry, clamped_si = _choose_entry(entries, site_index)
         except ValueError as exc:
@@ -270,19 +289,21 @@ def main(argv: list[str] | None = None) -> int:
                 f"feature {series['feature_id']}: raw={raw_species} "
                 f"mapped={species}: {exc}"
             ) from exc
+        mapped_species = surrogate or species
         values = _curve_values(
             engine=engine,
             entry=entry,
             site_index=clamped_si,
             density=density,
-            species=species,
+            species=mapped_species,
         )
         rows.append({"feature_id": int(series["feature_id"]), **values})
         provenance_rows.append(
             {
                 "feature_id": int(series["feature_id"]),
                 "raw_species": raw_species,
-                "mapped_species": species,
+                "mapped_species": mapped_species,
+                "surrogate": surrogate,
                 "requested_site_index": site_index,
                 "used_site_index": clamped_si,
                 "requested_density": density,
