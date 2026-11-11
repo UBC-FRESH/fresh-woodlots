@@ -66,6 +66,15 @@ def main(argv: list[str] | None = None) -> int:
     first = schedule[schedule["offset"] < args.period].copy()
     first = first.drop_duplicates(subset=["block_id"], keep="first")
     if first.empty:
+        # Some woodlots have no harvest scheduled in the first 10 years.
+        # Use the first 10-year window that contains blocks instead.
+        start = int(schedule["offset"].min()) if not schedule.empty else 0
+        first = schedule[
+            (schedule["offset"] >= start)
+            & (schedule["offset"] < start + args.period)
+        ].copy()
+        first = first.drop_duplicates(subset=["block_id"], keep="first")
+    if first.empty:
         raise SystemExit("No blocks in the first WS4 period")
 
     areas = blocks.groupby("block_id")["area_ha"].sum()

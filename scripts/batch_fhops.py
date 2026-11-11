@@ -22,6 +22,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 QUEUE_PATH = REPO_ROOT / "queue" / "woodlot_build_queue.json"
 LOG_ROOT = REPO_ROOT / "batch" / "fhops"
 BUILD_SCENARIO = REPO_ROOT / "scripts" / "build_fhops_pilot.py"
+WRITE_QUEUE = True
 
 
 def _read_queue() -> dict[str, object]:
@@ -29,6 +30,8 @@ def _read_queue() -> dict[str, object]:
 
 
 def _write_queue(payload: dict[str, object]) -> None:
+    if not WRITE_QUEUE:
+        return
     temp = QUEUE_PATH.with_suffix(".tmp")
     temp.write_text(
         json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
@@ -48,7 +51,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--only", action="append", default=None)
     parser.add_argument("--retry-failed", action="store_true")
     parser.add_argument("--timeout", type=int, default=3600)
+    parser.add_argument(
+        "--no-queue-writes",
+        action="store_true",
+        help="Do not touch the shared queue while a build batch is running",
+    )
     args = parser.parse_args(argv)
+    global WRITE_QUEUE
+    WRITE_QUEUE = not args.no_queue_writes
 
     LOG_ROOT.mkdir(parents=True, exist_ok=True)
     payload = _read_queue()
