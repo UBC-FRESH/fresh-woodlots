@@ -22,6 +22,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - name: Install documentation dependencies
         run: python -m pip install -r docs/requirements.txt
       - name: Build Sphinx HTML
