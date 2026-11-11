@@ -177,6 +177,10 @@ python3 "$ROOT/scripts/calibrate_w4w_aac.py" \
   --slug "$SLUG" --quick --write-docs || \
   echo "warning: W4W calibration failed for $SLUG"
 
+echo "[9c/10] demo scenarios"
+python3 "$ROOT/scripts/prepare_demo.py" --only "$SLUG" || \
+  echo "warning: scenario preparation failed for $SLUG"
+
 echo "[10/10] FHOPS operational pilot"
 if [[ -n "$AAC" ]] && command -v fhops >/dev/null 2>&1 && [[ "${SKIP_FHOPS:-0}" != "1" ]]; then
   python3 "$ROOT/scripts/build_fhops_pilot.py" \
