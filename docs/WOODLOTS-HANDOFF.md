@@ -40,6 +40,10 @@ Open `http://127.0.0.1:8795/`.
   and waiting for the next public report.
 - Each model is built from public VRI, Proxy THLB, VDYP, and TIPSY data; no
   private licensee data is used.
+- The Proxy THLB is factor-weighted: `pthlb_fact` is a partial contribution, so
+  the WS4 managed area can be much smaller than the licence/AAC area. Per-hectare
+  harvest on the managed area will therefore look higher than the licence-wide
+  AAC MAI. That is a land-base effect, not a yield-curve error.
 - The portal is a planning prototype, not a statutory AAC determination.
 - The same chain that built the 62 community forests scales to the woodlot
   sector; the remaining work is batch compute and public hosting.
