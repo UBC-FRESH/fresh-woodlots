@@ -8,14 +8,24 @@ base, and timber harvesting land base.
 
 | Licence | Source | Published GLB | Published AFLB / net | Published THLB | Published AAC | Our AOI | Our VRI area | Our Proxy THLB | Our calibrated net |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| W1674 | Woodlot Management Plan #2 (2024) | 402.0 ha (gross 406.2) | 395.2 ha | **303.8 ha** | 2,425 m³/yr | 406.21 ha | 406.21 ha | 329.26 ha | pending build |
-| W1832 | Management Plan #1 (2000) | 619.4 ha | 479.3 ha* | **398.6 ha** | 1,043 m³/yr | 593.45 ha | 593.45 ha | 460.06 ha | pending build |
+| W1674 | Woodlot Management Plan #2 (2024) | 402.0 ha (gross 406.2) | 395.2 ha | **303.8 ha** | 2,425 m³/yr | 406.21 ha | 256.00 ha* | 329.26 ha | **321.05 ha** |
+| W1832 | Management Plan #1 (2000) | 619.4 ha | 479.3 ha** | **398.6 ha** | 1,043 m³/yr | 593.45 ha | 488.48 ha* | 460.06 ha | 105.32 ha† |
 | W0007 | Management Plan #4 / W4W report (2001) | 275 ha | 275.4 ha net; 261.4 ha netdown | not stated | 2,600 m³/yr (current); 2,672 (2001) | 283.56 ha | 283.56 ha | 226.44 ha | 209.58 ha |
 
-\* W1832 AFLB is derived from the plan's Table 6: 619.4 ha total less 100%
+\* Compiled WS4 fragment area, not the full VRI clip. The VRI clip for W1674
+is 406.21 ha and for W1832 is 593.45 ha; the compiled fragments exclude
+non-contributing/unmanaged parts.
+
+\** W1832 AFLB is derived from the plan's Table 6: 619.4 ha total less 100%
 netdowns of 30.2 + 1.8 + 91.9 + 16.2 ha = 479.3 ha. The plan calls the
 remaining area the **Timber Management Landbase** (398.6 ha), after partial
 netdowns.
+
+† W1832 is a **partial-cut / commercial-thinning** plan. The v1 calibration is
+a clearcut/oldest-first replica; it overestimates the sustainable yield at full
+area and therefore solves to a much smaller effective area. Do not treat
+105.32 ha as a THLB estimate. W1832 is the clearest evidence that a v2
+partial-cut calibration is needed.
 
 ## Comparison
 
@@ -38,7 +48,9 @@ Our public-data results:
 - Proxy THLB **329.26 ha** vs 303.8 ha THLB (**+8.4%**)
 
 The modern plan is the strongest benchmark: our land base is close, but our
-Proxy THLB is less netted than the local plan by about 25 ha.
+Proxy THLB is less netted than the local plan by about 25 ha. The v1
+clearcut calibration solves to **321.05 ha**, only **+5.7%** above the published
+303.8 ha THLB.
 
 The March 2026 public AAC listing currently gives W1674 **2,255 m³/year**,
 while the 2024 plan proposed **2,425 m³/year**. That difference is separate
@@ -67,6 +79,10 @@ The public AOI is smaller than the plan's total; the plan includes Crown and
 private land and a different boundary vintage. The Proxy THLB sits between the
 plan's AFLB and THLB, which is consistent with the Proxy THLB being a strategic
 midpoint rather than a local netdown.
+
+The v1 calibration does **not** apply to W1832's partial-cutting regime: it
+solves to 105.32 ha, which is not a credible THLB. This is a model-method
+mismatch, not a land-base result.
 
 ### W0007 — older Woodlot 3 report
 
@@ -105,10 +121,14 @@ always more generous than a local plan; it can be lower.
 
    A range of roughly **0.87–0.99** is the honest current uncertainty band.
 
-4. **W0026's 660.8 ha calibration is consistent with the Proxy THLB**, while
-   W1674/W1832 suggest local netdowns closer to 0.87–0.92. That is exactly the
-   kind of local refinement a real management plan or W4W project would
-   provide.
+4. **W0026's 660.8 ha calibration is consistent with the Proxy THLB**, and
+   W1674's clearcut calibration (321.05 ha) is within 6% of the published
+   THLB. W1832 cannot be calibrated with the v1 clearcut model because the
+   published plan is partial-cut/thinning.
+5. **Next modelling step:** a versioned v2 calibration with partial-cut
+   parameters (30% removal, 20-year re-entry, 0.80 adjustment) and the W4W
+   harvest-age rules. It should be run over the whole population only after
+   v1 is fully documented, so the two versions can be compared.
 
 ## Sources
 
