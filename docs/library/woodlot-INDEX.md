@@ -93,6 +93,7 @@ rg -n -i "allowable annual cut" data/library/woodlot/text
 
 | Document | Local file | Text | Source |
 |---|---|---|---|
+| Cutting Permit Extension and Surrender Policy | `raw/transfers/cutting_permit_extension_surrender_policy_26.pdf` | `text/transfers/cutting_permit_extension_surrender_policy_26.txt` | https://www2.gov.bc.ca/assets/download/22F5B1B2335E45128894BF61D24645D8 |
 | Request for Approval of an Intended Transfer (RAIT) of a Woodlot Licence Agreement (DOCX, 84KB) | `raw/transfers/rait_template_woodlot_2022-05.docx` | `text/transfers/rait_template_woodlot_2022-05.txt` | https://www2.gov.bc.ca/assets/gov/farming-natural-resources-and-industry/forestry/timber-tenures/transfers/rait_template_woodlot_2022-05.docx |
 | Woodlot Licence Disposition Guide (PDF, 499KB) | `raw/transfers/wltransferguide_final_2022-05.pdf` | `text/transfers/wltransferguide_final_2022-05.txt` | https://www2.gov.bc.ca/assets/gov/farming-natural-resources-and-industry/forestry/timber-tenures/transfers/wltransferguide_final_2022-05.pdf |
 
@@ -118,9 +119,3 @@ rg -n -i "allowable annual cut" data/library/woodlot/text
 | W0026 w0026_letter | `raw/woodlot-specific/W0026/w0026_letter.pdf` | `text/woodlot-specific/W0026/w0026_letter.txt` | — |
 | W0026 w0026_letter_2018 | `raw/woodlot-specific/W0026/w0026_letter_2018.pdf` | `text/woodlot-specific/W0026/w0026_letter_2018.txt` | — |
 | W0026 w0026_plan_2022 | `raw/woodlot-specific/W0026/w0026_plan_2022.pdf` | `text/woodlot-specific/W0026/w0026_plan_2022.txt` | — |
-
-## Failed downloads
-
-| URL | Error |
-|---|---|
-| https://www2.gov.bc.ca/assets/download/22F5B1B2335E45128894BF61D24645D8 | HTTP Error 404: Not Found |
