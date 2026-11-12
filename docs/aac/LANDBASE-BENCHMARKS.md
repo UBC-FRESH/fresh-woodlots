@@ -106,6 +106,27 @@ This is a weak benchmark because the inventory, yield model, and planning
 assumptions are from 2001. It does show that the public Proxy THLB is not
 always more generous than a local plan; it can be lower.
 
+## Tactical validation
+
+The FHOPS tactical–operational pipeline was run on the clearcut benchmarks
+using **all compiled WS4 blocks** as the candidate pool:
+
+| Licence | Tactical blocks | Tactical area | 10-year volume | Volume/ha |
+|---|---:|---:|---:|---:|
+| W1674 | 35 | 256.0 ha | 22,550 m³ | 88.1 m³/ha |
+| W0007 | 52 | 221.7 ha | 26,000 m³ | 117.3 m³/ha |
+| W0026 | 144 | 732.5 ha | 73,110 m³ | 99.8 m³/ha |
+| W1548 | 85 | 404.8 ha | 40,000 m³ | 98.8 m³/ha |
+| W2023 | 120 | 635.3 ha | 58,330 m³ | 91.8 m³/ha |
+
+The original compressed FHOPS block selection for W1548 covered only 2.1 ha
+for 40,000 m³ (about 18,900 m³/ha), so the candidate pool was widened to all
+WS4 blocks. W1832 is not given a tactical plan because its plan documents
+partial cutting; the v2 land-base result remains the relevant check.
+
+See [`../TACTICAL-VALIDATION.md`](../TACTICAL-VALIDATION.md) for methods and
+caveats. Tactical area is a harvest footprint, not a published THLB.
+
 ## What the benchmarks imply
 
 1. **Our GLB/AOI is in the right range.** W1674 is within 1%, W1832 within 4%.

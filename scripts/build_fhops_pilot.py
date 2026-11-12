@@ -88,33 +88,39 @@ def main(argv: list[str] | None = None) -> int:
     blocks = pd.read_parquet(
         instance_root / "ws4" / "build" / "compiled" / "blocks.parquet"
     )
-    first = schedule[schedule["offset"] < args.period].copy()
-    first = first.drop_duplicates(subset=["block_id"], keep="first")
+    areas = blocks.groupby("block_id")["area_ha"].sum()
     if args.block_ids:
         wanted = {
             int(item)
             for item in args.block_ids.split(",")
             if item.strip()
         }
-        first = first[first["block_id"].astype(int).isin(wanted)]
-    if first.empty:
-        # Some woodlots have no harvest scheduled in the first 10 years.
-        # Use the first 10-year window that contains blocks instead.
-        start = int(schedule["offset"].min()) if not schedule.empty else 0
-        first = schedule[
-            (schedule["offset"] >= start)
-            & (schedule["offset"] < start + args.period)
-        ].copy()
+        selected = [
+            (block_id, float(areas.loc[block_id]))
+            for block_id in sorted(wanted)
+            if block_id in areas.index
+        ]
+        if not selected:
+            raise SystemExit("No requested blocks in the compiled dataset")
+    else:
+        first = schedule[schedule["offset"] < args.period].copy()
         first = first.drop_duplicates(subset=["block_id"], keep="first")
-    if first.empty:
-        raise SystemExit("No blocks in the first WS4 period")
-
-    areas = blocks.groupby("block_id")["area_ha"].sum()
-    selected = [
-        (int(block_id), float(areas.loc[int(block_id)]))
-        for block_id in first["block_id"]
-        if int(block_id) in areas.index
-    ]
+        if first.empty:
+            # Some woodlots have no harvest scheduled in the first 10 years.
+            # Use the first 10-year window that contains blocks instead.
+            start = int(schedule["offset"].min()) if not schedule.empty else 0
+            first = schedule[
+                (schedule["offset"] >= start)
+                & (schedule["offset"] < start + args.period)
+            ].copy()
+            first = first.drop_duplicates(subset=["block_id"], keep="first")
+        if first.empty:
+            raise SystemExit("No blocks in the first WS4 period")
+        selected = [
+            (int(block_id), float(areas.loc[int(block_id)]))
+            for block_id in first["block_id"]
+            if int(block_id) in areas.index
+        ]
     total_area = sum(area for _block, area in selected)
     target_volume = args.target_volume or args.aac * args.period
     volume_map: dict[str, float] = {}

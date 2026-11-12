@@ -66,4 +66,5 @@ allowlist is awaiting a Woodlots BC test user.
 - [10-minute demo script](DEMO-SCRIPT.md)
 - [FHOPS pilots](FHOPS.md)
 - [Calibration audit](aac/CALIBRATION-AUDIT.md)
+- [Tactical validation](TACTICAL-VALIDATION.md)
 - [Release notes](RELEASE-NOTES.md)

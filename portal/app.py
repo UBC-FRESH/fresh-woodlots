@@ -436,7 +436,8 @@ SOURCES_HTML = """<!doctype html>
 
   <footer>UBC FRESH · Woodlots BC Planning Portal ·
   <a href="/">portal home</a> ·
-  <a href="/guide">How to read this</a></footer>
+  <a href="/guide">How to read this</a> ·
+  <a href="/benchmarks">Validation</a></footer>
 </main>
 </body>
 </html>"""
@@ -477,6 +478,7 @@ _LEGAL_TEMPLATE = """<!doctype html>
   <footer>UBC FRESH · Woodlots BC Planning Portal ·
   <a href="/about">Sources &amp; methods</a> ·
   <a href="/guide">How to read this</a> ·
+  <a href="/benchmarks">Validation</a> ·
   <a href="/privacy">Privacy</a></footer>
 </main>
 </body>
@@ -588,6 +590,22 @@ async def guide() -> HTMLResponse:
     body = MARKDOWN.render(text)
     return HTMLResponse(
         _LEGAL_TEMPLATE.replace("__TITLE__", "How to read this portal").replace(
+            "__BODY__", body
+        )
+    )
+
+
+@app.get("/benchmarks", response_class=HTMLResponse)
+async def benchmarks() -> HTMLResponse:
+    path = ROOT / "docs" / "TACTICAL-VALIDATION.md"
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail="benchmarks are unavailable")
+    text = path.read_text(encoding="utf-8")
+    if text.startswith("# "):
+        text = text.split("\n", 1)[1].lstrip("\n")
+    body = MARKDOWN.render(text)
+    return HTMLResponse(
+        _LEGAL_TEMPLATE.replace("__TITLE__", "Tactical validation").replace(
             "__BODY__", body
         )
     )
@@ -1002,6 +1020,7 @@ async def landing() -> HTMLResponse:
   scenarios; use professional judgment and the cited public sources.
   <a href="/about">Sources &amp; methods</a> ·
   <a href="/guide">How to read this</a> ·
+  <a href="/benchmarks">Validation</a> ·
   <a href="/terms">Terms</a> ·
   <a href="/privacy">Privacy</a>.</footer>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

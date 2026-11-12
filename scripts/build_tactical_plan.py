@@ -46,14 +46,27 @@ def _periods() -> list[dict[str, object]]:
     return rows
 
 
-def build_scenario(root: Path, years: int = YEARS) -> Path:
+def build_scenario(
+    root: Path,
+    years: int = YEARS,
+    block_source: str = "all",
+) -> Path:
     slug = root.name
     prefix = slug.split("-")[-1].upper()
     summary = json.loads((root / "fhops" / "summary.json").read_text(encoding="utf-8"))
     aac = float(summary["aac_m3"])
-    blocks = gpd.read_file(root / "fhops" / "out" / "scheduled_blocks.geojson")
+    if block_source == "all":
+        blocks = gpd.read_file(root / "ws4" / "geometry" / "blocks.geojson")
+        blocks["label"] = blocks["block_id"].map(
+            lambda value: f"{prefix}-{int(value)}"
+        )
+    else:
+        blocks = gpd.read_file(
+            root / "fhops" / "out" / "scheduled_blocks.geojson"
+        )
+    blocks = blocks[blocks["area_ha"].astype(float) > 0].copy()
     if blocks.empty:
-        raise SystemExit(f"{slug}: no scheduled blocks")
+        raise SystemExit(f"{slug}: no candidate blocks")
     total_area = float(blocks["area_ha"].sum())
     total_volume = aac * years
     yield_per_ha = total_volume / total_area
@@ -231,6 +244,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--queue", type=Path, default=QUEUE_PATH)
     parser.add_argument("--only", action="append", default=None)
     parser.add_argument("--years", type=int, default=YEARS)
+    parser.add_argument(
+        "--block-source",
+        choices=("all", "scheduled"),
+        default="all",
+        help="Candidate pool: all WS4 blocks or only the FHOPS schedule",
+    )
     parser.add_argument("--time-limit", type=int, default=180)
     args = parser.parse_args(argv)
 
@@ -243,7 +262,7 @@ def main(argv: list[str] | None = None) -> int:
         if entry.get("status") not in ("built", "pilot_built"):
             continue
         root = REPO_ROOT / "instances" / slug
-        scenario_path = build_scenario(root, args.years)
+        scenario_path = build_scenario(root, args.years, args.block_source)
         payload = solve_scenario(root, scenario_path, args.time_limit)
         harvest = payload.get("harvest_decisions") or []
         selected = [

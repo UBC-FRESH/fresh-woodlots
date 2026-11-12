@@ -38,6 +38,7 @@ three featured pilots add ten-year tactical–operational plans.
 
    W4W-WINE
    FHOPS
+   TACTICAL-VALIDATION
    TREELAB
    api
 

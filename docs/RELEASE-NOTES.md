@@ -14,7 +14,8 @@ Host: `https://fresh-woodlotsbc.01101.dev`
 - year-aware 3D studio focused on the active block;
 - operating-days field in studio block popups;
 - Tree Lab cases for all three featured pilots;
-- pilot brief, demo script, how-to-read guide, and release notes.
+- pilot brief, demo script, how-to-read guide, and release notes;
+- tactical validation runs for W1674 and W0007, plus a public `/benchmarks` page.
 
 ### Verified
 

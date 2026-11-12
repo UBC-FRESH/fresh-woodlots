@@ -133,7 +133,9 @@ python scripts/build_pareto_sweep.py --only wl-w0026 \
 
 All **798** built instances have FHOPS summaries, maps, and theatre data. The
 three featured pilots also have ten-year tactical–operational plans, Pareto
-sweeps, and Tree Lab cases.
+sweeps, and Tree Lab cases. W1674 and W0007 have additional tactical
+validation plans using all compiled WS4 blocks; see
+[TACTICAL-VALIDATION.md](TACTICAL-VALIDATION.md).
 
 ## Caveats
 
