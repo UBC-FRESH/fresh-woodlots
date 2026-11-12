@@ -15,17 +15,22 @@ It listens on `127.0.0.1:8795`. The BCCFA portal remains on `8796` and Nemora on
 
 ## Demo vs read-only
 
-The current unit uses:
+The current unit uses public read-only mode:
 
 ```text
-PUBLIC_READ_ONLY=0
-DEMO_MODE=1
+PUBLIC_READ_ONLY=1
+DEMO_MODE=0
 WS4_OVERVIEW_ZOOM=0
 ```
 
-For public read-only hosting, set `PUBLIC_READ_ONLY=1`, `DEMO_MODE=0`, and
-re-add a read-only bind for the instance tree. See
-`PUBLIC-HOSTING-PLAN.md` and `WOODLOTS-HANDOFF.md`.
+The portal rejects all non-GET/HEAD/OPTIONS requests before they reach a
+mounted WS4 app or Tree Lab, and the application tree is mounted with
+`ReadOnlyPaths`. This blocks target edits, searches, scenario writes, and
+Tree Lab run starts.
+
+For a write-enabled demo, temporarily set `PUBLIC_READ_ONLY=0`,
+`DEMO_MODE=1`, remove `ReadOnlyPaths`, and keep the service behind Cloudflare
+Access. See `PUBLIC-HOSTING-PLAN.md` and `WOODLOTS-HANDOFF.md`.
 
 ## GitHub Pages
 

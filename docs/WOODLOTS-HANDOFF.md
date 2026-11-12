@@ -1,5 +1,10 @@
 # Woodlots BC demo runbook
 
+The live service is currently **read-only** (`PUBLIC_READ_ONLY=1`,
+`DEMO_MODE=0`). To run the write-enabled demo, temporarily restore the demo
+unit behind Cloudflare Access; see `PUBLIC-HOSTING-PLAN.md` and
+`CLOUDFLARE-ACCESS.md`.
+
 ## Before the demo
 
 ```bash

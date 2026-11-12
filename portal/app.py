@@ -287,6 +287,20 @@ def discover() -> list[Instance]:
 
 app = FastAPI(title="Woodlots BC Planning Portal")
 
+
+if PUBLIC_READ_ONLY:
+
+    @app.middleware("http")
+    async def read_only_guard(request: Any, call_next: Any) -> Any:
+        """Reject writes at the portal boundary, including mounted apps."""
+        if request.method not in ("GET", "HEAD", "OPTIONS"):
+            return JSONResponse(
+                {"detail": "this service is read-only"},
+                status_code=403,
+            )
+        return await call_next(request)
+
+
 TREELAB_MOUNTED = False
 try:
     from sandbox.tree_lab.app import ServiceConfig as TreeLabConfig

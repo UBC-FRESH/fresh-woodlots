@@ -25,19 +25,19 @@ The unit uses the newer WS4 UI:
 
 ```text
 PYTHONPATH=/srv/shared-data/gep/ws4/ws4-public-demo:/srv/shared-data/gep/ws4/fresh-woodlots:/srv/shared-data/gep/ws4/fhops-ground-support:/srv/shared-data/gep/ws4/fhops-ground-support/src
-PUBLIC_READ_ONLY=0
-DEMO_MODE=1
+PUBLIC_READ_ONLY=1
+DEMO_MODE=0
 WS4_OVERVIEW_ZOOM=0
 ```
 
-For public read-only hosting:
+For a temporary write-enabled demo behind Cloudflare Access:
 
 ```text
-PUBLIC_READ_ONLY=1
-DEMO_MODE=0
+PUBLIC_READ_ONLY=0
+DEMO_MODE=1
 ```
 
-and re-add a read-only bind for the instance tree.
+Remove `ReadOnlyPaths` for the demo, and restore the read-only unit afterwards.
 
 ## Verify
 

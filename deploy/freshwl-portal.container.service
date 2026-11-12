@@ -11,8 +11,8 @@ Group=gep
 WorkingDirectory=/srv/shared-data/gep/ws4/fresh-woodlots
 Environment=PYTHONPATH=/srv/shared-data/gep/ws4/ws4-public-demo:/srv/shared-data/gep/ws4/fresh-woodlots:/srv/shared-data/gep/ws4/fhops-ground-support:/srv/shared-data/gep/ws4/fhops-ground-support/src
 Environment=PYTHONDONTWRITEBYTECODE=1
-Environment=PUBLIC_READ_ONLY=0
-Environment=DEMO_MODE=1
+Environment=PUBLIC_READ_ONLY=1
+Environment=DEMO_MODE=0
 Environment=WS4_OVERVIEW_ZOOM=0
 ExecStart=/home/gep/.venv/bin/uvicorn portal.app:app --host 127.0.0.1 --port 8795 --workers 1
 Restart=always
@@ -28,6 +28,7 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=full
 ProtectHome=false
+ReadOnlyPaths=/srv/shared-data/gep/ws4/fresh-woodlots
 ProtectKernelTunables=true
 ProtectKernelModules=true
 ProtectControlGroups=true

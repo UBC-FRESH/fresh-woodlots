@@ -120,15 +120,17 @@ python scripts/prepare_demo.py
 
 The systemd unit is `deploy/freshwl-portal.container.service`, installed as
 `freshwl-portal.service` on port 8795. It uses the newer WS4 UI from
-`/srv/shared-data/gep/ws4/ws4-public-demo` and runs in demo mode:
+`/srv/shared-data/gep/ws4/ws4-public-demo` and is currently read-only:
 
 ```text
-PUBLIC_READ_ONLY=0
-DEMO_MODE=1
+PUBLIC_READ_ONLY=1
+DEMO_MODE=0
 ```
 
-For a public read-only deployment, set `PUBLIC_READ_ONLY=1` and
-`DEMO_MODE=0`, and re-enable a read-only bind for the instance tree.
+The portal rejects all non-GET/HEAD/OPTIONS requests, including WS4 searches
+and Tree Lab run starts. The application tree is mounted read-only for the
+service. A write-enabled demo can be restored temporarily by reverting the
+unit and restarting it behind Cloudflare Access.
 
 ## Caveats
 

@@ -1,10 +1,30 @@
 {
-  "generated_at": "2026-11-12T02:08:10Z",
+  "generated_at": "2026-11-12T02:43:01Z",
   "base": "http://127.0.0.1:8795",
   "instances": 798,
   "failures": 0,
-  "elapsed_s": 13.5,
+  "elapsed_s": 14.5,
   "checks": 11,
+  "read_only": true,
+  "write_checks": [
+    {
+      "path": "/instance/wl-w0026/api/runs",
+      "status": 403
+    },
+    {
+      "path": "/treelab/api/cases/w0026-61/run",
+      "status": 403
+    }
+  ],
+  "health": {
+    "status": "ok",
+    "instances": 845,
+    "ready": 798,
+    "buildable": 798,
+    "pending_aac": 47,
+    "read_only": true,
+    "demo_mode": false
+  },
   "results": [
     {
       "slug": "wl-w0001",

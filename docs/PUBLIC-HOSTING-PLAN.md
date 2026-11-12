@@ -6,10 +6,12 @@ Scope: all active BC woodlot licences; 845 catalogued, 798 with public AAC.
 
 ## 0. Release status
 
-The build-pipeline and portal QA are complete; the service remains a
-release candidate in demo mode. See
-[`RELEASE-READINESS.md`](RELEASE-READINESS.md) for the passed checks and the
-open access-mode decision.
+The build-pipeline and portal QA are complete. The container service is now
+**public read-only mode** (`PUBLIC_READ_ONLY=1`, `DEMO_MODE=0`) with
+write requests rejected at the portal boundary. The remaining external step is
+the root-host DNS/ingress and Cloudflare Access application for
+`fresh-woodlots.01101.dev`; see
+[`CLOUDFLARE-ACCESS.md`](CLOUDFLARE-ACCESS.md).
 
 ## 1. Current deployment
 
@@ -32,8 +34,9 @@ Facts:
 - WS4 UI from `/srv/shared-data/gep/ws4/ws4-public-demo`;
 - 845 queue entries, 798 buildable, 47 catalogued with AAC pending;
 - WS4 sub-apps are lazy-mounted, so 798 builds do not all load at startup;
-- service is in demo mode (`PUBLIC_READ_ONLY=0`, `DEMO_MODE=1`), which
-  enables the Plan tab, saved scenarios, and `POST /api/runs`.
+- service is in public read-only mode (`PUBLIC_READ_ONLY=1`, `DEMO_MODE=0`);
+  all non-GET/HEAD/OPTIONS requests return **403**;
+- the app tree is mounted `ReadOnlyPaths` for the service.
 
 The BCCFA portal remains on **8796** and Nemora on **8799**. Do not reuse those
 ports.
@@ -73,7 +76,8 @@ read-only WS4 UI.
 - no public shell, no OpenCode agent, no uploads;
 - no raw TIPSY tables or government model bundles redistributed;
 - no claim of statutory timber supply analysis;
-- demo mode only behind Cloudflare Access and with rate limits on `/api/runs`;
+- public mode rejects every non-GET/HEAD/OPTIONS request at the portal boundary;
+  Cloudflare Access remains the identity gate until the public review;
 - health check: `scripts/healthcheck.sh http://127.0.0.1:8795`.
 
 ## 6. Rollback

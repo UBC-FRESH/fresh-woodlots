@@ -33,8 +33,18 @@ LOCAL_FILES = (
 )
 
 
-def get(base: str, path: str, timeout: float = 20.0) -> tuple[int, bytes]:
-    request = Request(base + path, headers={"User-Agent": "woodlots-qa/1.0"})
+def get(
+    base: str, path: str, timeout: float = 20.0, method: str = "GET"
+) -> tuple[int, bytes]:
+    request = Request(
+        base + path,
+        data=b"{}" if method == "POST" else None,
+        method=method,
+        headers={
+            "User-Agent": "woodlots-qa/1.0",
+            "Content-Type": "application/json",
+        },
+    )
     try:
         with urlopen(request, timeout=timeout) as response:
             return response.status, response.read()
@@ -114,6 +124,29 @@ def main() -> int:
                 print(f"checked {index}/{len(slugs)}", flush=True)
     results.sort(key=lambda item: str(item["slug"]))
     failures = [item for item in results if item["failures"]]
+    health_status, health_body = get(args.base, "/health")
+    health = {}
+    if health_status == 200:
+        try:
+            health = json.loads(health_body)
+        except json.JSONDecodeError:
+            health = {}
+    read_only = bool(health.get("read_only"))
+    write_checks = []
+    if read_only:
+        for path in (
+            "/instance/wl-w0026/api/runs",
+            "/treelab/api/cases/w0026-61/run",
+        ):
+            status, _ = get(args.base, path, method="POST")
+            write_checks.append({"path": path, "status": status})
+            if status != 403:
+                failures.append(
+                    {
+                        "slug": "read-only-guard",
+                        "failures": [f"POST {path} returned {status}, expected 403"],
+                    }
+                )
     elapsed = time.time() - started
     payload = {
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
@@ -122,6 +155,9 @@ def main() -> int:
         "failures": len(failures),
         "elapsed_s": round(elapsed, 1),
         "checks": len(PATHS) + len(LOCAL_FILES),
+        "read_only": read_only,
+        "write_checks": write_checks,
+        "health": health,
         "results": results,
     }
     OUT_JSON.parent.mkdir(parents=True, exist_ok=True)
@@ -133,11 +169,14 @@ def main() -> int:
         f"Base URL: `{args.base}`  ",
         f"Built instances checked: **{len(results)}**  ",
         f"Checks per instance: **{payload['checks']}**  ",
+        f"Read-only mode: **{read_only}**  ",
+        f"Write checks: **{len(write_checks)}**  ",
         f"Failures: **{len(failures)}**  ",
         f"Elapsed: **{elapsed:.1f}s**",
         "",
         "Each instance was checked for the FHOPS summary, scheduled blocks, "
-        "timeline, theatre, W4W calibration, and six portal routes.",
+        "timeline, theatre, W4W calibration, and six portal routes. In "
+        "read-only mode, two POST endpoints are also checked for a **403**.",
         "",
     ]
     if failures:

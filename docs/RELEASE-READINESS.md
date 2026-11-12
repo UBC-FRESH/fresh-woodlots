@@ -1,7 +1,7 @@
 # Release readiness
 
 Date: 2026-11-12  
-Status: **release candidate, still in demo mode**  
+Status: **release candidate, live in read-only mode; Access mapping pending**  
 Tag: `v0.9.0-rc1`
 
 ## What passed
@@ -61,21 +61,19 @@ See [`aac/CALIBRATION-AUDIT.md`](aac/CALIBRATION-AUDIT.md) and
 
 ## Open release decisions
 
-1. **Access mode.** The service currently runs with:
-   ```text
-   PUBLIC_READ_ONLY=0
-   DEMO_MODE=1
-   ```
-   For public read-only:
+1. **Access mode.** The container now runs:
    ```text
    PUBLIC_READ_ONLY=1
    DEMO_MODE=0
    ```
-   This requires the host mapping and Access policy to be confirmed outside the
-   container. Do not flip it until that is agreed.
+   The remaining step is the root-host DNS/ingress and Cloudflare Access
+   application for `fresh-woodlots.01101.dev`. See
+   [`CLOUDFLARE-ACCESS.md`](CLOUDFLARE-ACCESS.md). The portal is not yet
+   reachable at that hostname.
 
 2. **Public hostname.** Proposed: `https://fresh-woodlots.01101.dev`.
-   The container-local URL is `http://127.0.0.1:8795/`.
+   The container-local URL is `http://127.0.0.1:8795/`. The hostname did not
+   resolve from inside the container at the time of this check.
 
 3. **Calibration presentation.** Decide whether method-check cards remain
    visible with warnings, or whether extreme cases are hidden from summary
@@ -95,8 +93,11 @@ See [`aac/CALIBRATION-AUDIT.md`](aac/CALIBRATION-AUDIT.md) and
 - [x] Tree Lab cases render;
 - [x] docs published;
 - [x] calibration method decision documented;
-- [ ] access mode and host mapping approved;
-- [ ] release tag created after the access decision.
+- [x] portal switched to read-only and write guard verified;
+- [ ] root-host DNS/ingress and Cloudflare Access application configured;
+- [ ] Access-protected public URL verified;
+- [ ] Access removed after public review (if approved);
+- [ ] release tag updated after the access decision.
 
 ## Rollback
 
