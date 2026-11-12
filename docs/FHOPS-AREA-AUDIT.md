@@ -3,9 +3,9 @@
 The first-period FHOPS pilots compress ten years of AAC into a short horizon. Volume per selected scheduled hectare is a screening check, not a yield-table validation.
 
 - Instances audited: **798**
-- Median volume / selected ha: **447.9 m³/ha**
-- 90th percentile: **968.4 m³/ha**
-- Check (> 1,000 m³/ha): **70**
+- Median volume / selected ha: **445.0 m³/ha**
+- 90th percentile: **943.0 m³/ha**
+- Check (> 1,000 m³/ha): **64**
 - Extreme (> 5,000 m³/ha): **0**
 - Missing/zero selected area: **0**
 
@@ -19,12 +19,6 @@ The portal labels `check`, `extreme`, and `missing` cases as **⚠ area check**.
 
 | File | Plan | Blocks | Selected ha | 10-yr volume | m³/ha | Check |
 |---|---|---:|---:|---:|---:|---|
-| W0312 | first_period | 2 | 2.17 | 9,810 | 4529.0 | check |
-| W1903 | first_period | 1 | 3.61 | 11,030 | 3059.0 | check |
-| W1877 | first_period | 3 | 10.23 | 24,800 | 2425.3 | check |
-| W1841 | first_period | 1 | 7.30 | 15,220 | 2085.9 | check |
-| W1552 | first_period | 4 | 7.11 | 14,500 | 2039.3 | check |
-| W1590 | first_period | 3 | 14.56 | 29,440 | 2021.3 | check |
 | W1439 | first_period | 4 | 10.59 | 21,000 | 1983.8 | check |
 | W1593 | first_period | 2 | 9.16 | 17,950 | 1959.1 | check |
 | W0027 | first_period | 5 | 12.37 | 24,000 | 1940.7 | check |
@@ -44,13 +38,19 @@ The portal labels `check`, `extreme`, and `missing` cases as **⚠ area check**.
 | W1856 | first_period | 2 | 10.84 | 15,110 | 1393.6 | check |
 | W0010 | first_period | 3 | 34.82 | 47,940 | 1376.9 | check |
 | W1698 | first_period | 5 | 40.94 | 56,170 | 1372.1 | check |
+| W0038 | first_period | 2 | 40.28 | 55,070 | 1367.1 | check |
+| W1572 | first_period | 10 | 18.67 | 24,900 | 1333.8 | check |
+| W0046 | first_period | 6 | 52.92 | 70,220 | 1326.8 | check |
+| W0039 | first_period | 2 | 20.55 | 26,750 | 1302.0 | check |
+| W2108 | first_period | 3 | 35.52 | 46,000 | 1294.9 | check |
+| W0480 | first_period | 1 | 7.12 | 9,140 | 1284.0 | check |
 
 ## Class counts
 
 | Class | Count |
 |---|---:|
-| ok | 728 |
-| check | 70 |
+| ok | 734 |
+| check | 64 |
 | extreme | 0 |
 | missing | 0 |
 

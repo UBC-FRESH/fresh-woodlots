@@ -1,5 +1,11 @@
 # Release notes
 
+## v0.9.0-rc7 — 2026-11-12
+
+Rebuilt the six FHOPS cases above 2,000 m³ per selected hectare (W0312, W1552,
+W1590, W1841, W1877, W1903) with all compiled WS4 blocks. All six cleared the
+area check. The remaining 64 check cases are in the 1,000–2,000 m³/ha range.
+
 ## v0.9.0-rc6 — 2026-11-12
 
 Rebuilt the five extreme FHOPS area-check cases (W0307, W1591, W1601,
