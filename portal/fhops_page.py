@@ -5,6 +5,8 @@ from __future__ import annotations
 import html
 from typing import Any
 
+TREELAB_MOUNTED = False
+
 FHOPS_CSS = """<style>
   :root { color-scheme: light; --ink: #17231f; --muted: #5b6b64;
            --line: #d8e0db; --paper: #f7faf7; --accent: #1f6f4a;
@@ -107,23 +109,60 @@ def _fhops_page(instance: Any) -> str:
     scheduled = instance.root / "fhops" / "out" / "scheduled_blocks.geojson"
     period_volume = summary.get("total_production_m3")
     makespan = summary.get("makespan_day")
+    plan_kind = summary.get("plan_kind")
     try:
         average_rate = float(period_volume) / float(makespan)
     except (TypeError, ValueError, ZeroDivisionError):
         average_rate = None
-    stats = [
-        ("Annual AAC", f"{_fmt(instance.aac_m3)} m³/yr"),
-        ("Period volume (10 yr)", f"{_fmt(period_volume)} m³"),
-        ("Completed blocks", _fmt(summary.get("completed_blocks"))),
-        ("Makespan", f"{_fmt(makespan)} days"),
-        ("Average scheduled rate", f"{_fmt(average_rate)} m³/day"),
-        ("Configured rate", f"{_fmt(summary.get('rate_m3_per_day'))} m³/day"),
-        ("Horizon", f"{_fmt(summary.get('horizon_days'))} days"),
-        (
-            "Sequencing violations",
-            _fmt(summary.get("sequencing_violation_count")),
-        ),
-    ]
+    if plan_kind == "tenyear":
+        plan_label = "10 years"
+        stats = [
+            ("Annual AAC", f"{_fmt(instance.aac_m3)} m³/yr"),
+            ("10-year harvested", f"{_fmt(period_volume)} m³"),
+            ("Completed blocks", _fmt(summary.get("completed_blocks"))),
+            ("Makespan", f"{_fmt(summary.get('makespan_years'))} years"),
+            ("Horizon", f"{_fmt(summary.get('horizon_days'))} days"),
+            ("Average scheduled rate", f"{_fmt(average_rate)} m³/day"),
+        ]
+    elif plan_kind in ("rolling10", "multiyear"):
+        plan_label = (
+            "10 years · multi-year"
+            if plan_kind == "multiyear"
+            else "10 years · rolling"
+        )
+        stats = [
+            ("Annual AAC", f"{_fmt(instance.aac_m3)} m³/yr"),
+            (
+                "Annual harvested",
+                f"{_fmt(summary.get('annual_total_production_m3'))} m³",
+            ),
+            ("10-year harvested", f"{_fmt(period_volume)} m³"),
+            ("Blocks treated", _fmt(summary.get("blocks_treated"))),
+            (
+                "Annual processed",
+                f"{_fmt(summary.get('annual_processed_m3'))} m³",
+            ),
+            (
+                "Annual staged",
+                f"{_fmt(summary.get('annual_staged_m3'))} m³",
+            ),
+            ("Horizon", "3,650 days · 10 years"),
+            ("Makespan", plan_label),
+        ]
+    else:
+        stats = [
+            ("Annual AAC", f"{_fmt(instance.aac_m3)} m³/yr"),
+            ("Period volume (10 yr)", f"{_fmt(period_volume)} m³"),
+            ("Completed blocks", _fmt(summary.get("completed_blocks"))),
+            ("Makespan", f"{_fmt(makespan)} days"),
+            ("Average scheduled rate", f"{_fmt(average_rate)} m³/day"),
+            ("Configured rate", f"{_fmt(summary.get('rate_m3_per_day'))} m³/day"),
+            ("Horizon", f"{_fmt(summary.get('horizon_days'))} days"),
+            (
+                "Sequencing violations",
+                _fmt(summary.get("sequencing_violation_count")),
+            ),
+        ]
     stats_html = "".join(
         f'<div class="stat"><span>{html.escape(label)}</span>'
         f"<strong>{html.escape(value)}</strong></div>"
@@ -133,6 +172,53 @@ def _fhops_page(instance: Any) -> str:
         f'<li><a href="/fhops/{slug}/download/{name}">{html.escape(name)}</a></li>'
         for name in FHOPS_DOWNLOADS
     )
+    tree_lab_link = ""
+    if TREELAB_MOUNTED:
+        tree_lab_href = "/treelab/"
+        if instance.slug == "cfa-k3x":
+            tree_lab_href = "/treelab/?case=k3x-6683&run=demo-1"
+        tree_lab_link = (
+            f'<a class="button secondary" href="{tree_lab_href}">'
+            "Open Tree Lab 3D/replay</a>"
+        )
+    horizon_label = html.escape(str(summary.get("horizon_days") or 450))
+    if plan_kind == "tenyear":
+        plan_hint = (
+            "<p class='hint'>Ten-year seasonal plan: the scenario schedules "
+            "ten years of AAC volume using a 180-day operating season per "
+            "year. It is a compressed tactical pilot, not a global ten-year "
+            "MILP or a production schedule.</p>"
+        )
+    elif plan_kind == "multiyear":
+        plan_hint = (
+            "<p class='hint'>Ten-year multi-year plan: each year is an "
+            "optimized 180-day annual season with a different block "
+            "allocation. The plan cuts and stages the full annual AAC; "
+            "processed volume is the portion through the processor in that "
+            "season. This is not a global ten-year MILP or a production "
+            "schedule.</p>"
+        )
+    elif plan_kind == "rolling10":
+        plan_hint = (
+            "<p class='hint'>Ten-year rolling plan: each year is an optimized "
+            "180-day annual season, repeated over ten years. The annual plan "
+            "cuts and stages the full AAC; processed volume is the portion "
+            "through the processor in that season. This is not a production "
+            "schedule.</p>"
+        )
+    else:
+        plan_hint = (
+            "<p class='hint'>First-period, ground-based, rate-fixed pilot. "
+            "The scenario compresses ten years of AAC volume into a short "
+            "operating horizon; it is not annual production and not a "
+            "production operating plan.</p>"
+        )
+    if plan_kind == "tenyear":
+        kicker = "ten-year seasonal plan"
+    elif plan_kind in ("rolling10", "multiyear"):
+        kicker = "ten-year multi-year plan"
+    else:
+        kicker = "first-period operational pilot"
     if scheduled.is_file():
         map_html = (
             '<div id="fhops-map"></div>'
@@ -158,12 +244,13 @@ def _fhops_page(instance: Any) -> str:
 </head>
 <body>
   <header class="hero">
-    <p class="kicker">FHOPS · first-period operational pilot</p>
+    <p class="kicker">FHOPS · {kicker}</p>
     <h1>{html.escape(instance.label)}</h1>
     <p class="sub">{html.escape(instance.file_id)} ·
     {html.escape(instance.subtitle)}</p>
     <div class="actions">
       <a class="button studio" href="/fhops/{slug}/studio">Open 3D block studio</a>
+      {tree_lab_link}
       <a class="button" href="/fhops/{slug}/theatre">Open tree-scale theatre</a>
       <a class="button secondary" href="/instance/{slug}/">Open WS4 model</a>
       <a class="button secondary" href="/">All woodlots</a>
@@ -173,9 +260,7 @@ def _fhops_page(instance: Any) -> str:
     <section class="stats">{stats_html}</section>
     <section class="panel">
       <h2>Solved block plan</h2>
-      <p class="hint">First-period, ground-based, rate-fixed pilot. The scenario
-      schedules ten years of AAC volume inside a compressed operating horizon;
-      it is not annual production and not a production operating plan.</p>
+      {plan_hint}
       {map_html}
     </section>
     <section class="panel">
@@ -186,9 +271,9 @@ def _fhops_page(instance: Any) -> str:
     <section class="panel caveat">
       <h2>Read this as a pilot</h2>
       <p class="hint">The FHOPS pilot tests whether a public-data operational
-      model is useful. It uses a 450-day horizon, fixed rates, one ground-based
-      system, and no road or cost model. Treat the schedule as a conversation
-      starter, not a commitment.</p>
+      model is useful. It uses a {horizon_label}-day horizon, fixed rates,
+      one ground-based system, and no road or cost model. Treat the schedule
+      as a conversation starter, not a commitment.</p>
     </section>
   </main>
   <footer>Model outputs are pilot scenarios; use professional judgment and the

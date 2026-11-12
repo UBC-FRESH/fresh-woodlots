@@ -31,7 +31,7 @@ def _local_ring(polygon, centroid) -> list[list[float]]:
 
 
 def _choose_blocks(frame: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
-    eligible = frame[(frame["area_ha"] >= 1.0) & (frame["area_ha"] <= 50.0)].copy()
+    eligible = frame[(frame["area_ha"] >= 1.0) & (frame["area_ha"] <= 30.0)].copy()
     if eligible.empty:
         eligible = frame.copy()
     return eligible.sort_values("area_ha").head(3)

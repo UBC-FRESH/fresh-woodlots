@@ -90,8 +90,8 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.15;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x050b12);
-scene.fog = new THREE.Fog(0x050b12, 220, 520);
+scene.background = new THREE.Color(0x0c1b18);
+scene.fog = new THREE.Fog(0x0c1b18, 220, 700);
 
 const camera = new THREE.PerspectiveCamera(
   52, window.innerWidth / window.innerHeight, 0.1, 1200
@@ -122,11 +122,15 @@ const state = {
   skidder: null,
   processor: null,
   felled: 0,
-  delivered: 0,
+  skidded: 0,
+  processed: 0,
+  deck: 0,
   simTime: 0,
   playing: true,
   speed: 2,
   fellInterval: 0.16,
+  nextSkid: 0,
+  nextProcess: 0,
   falling: [],
   lastStats: 0,
 };
@@ -225,6 +229,12 @@ function buildGround(block) {
   scene.add(line);
 
   const landing = block.landing;
+  const deckLabel = labelSprite('Unprocessed deck', '#b45309');
+  deckLabel.position.set(landing[0] - 22, 7, landing[1] - 8);
+  scene.add(deckLabel);
+  const logLabel = labelSprite('Processed logs', '#d6a45c');
+  logLabel.position.set(landing[0] - 12, 7, landing[1] + 12);
+  scene.add(logLabel);
   const pad = new THREE.Mesh(
     new THREE.CircleGeometry(11, 32),
     new THREE.MeshStandardMaterial({ color: 0x5b3a24, roughness: 1 })
@@ -303,6 +313,21 @@ function buildLogs(block) {
   }
   scene.add(logs);
   state.logs = logs;
+
+  const deck = new THREE.InstancedMesh(
+    geometry.clone(),
+    new THREE.MeshStandardMaterial({ color: 0x8b5a2b, roughness: 0.9 }),
+    count
+  );
+  deck.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  for (let index = 0; index < count; index += 1) {
+    dummy.position.set(0, -10, 0);
+    dummy.scale.set(0, 0, 0);
+    dummy.updateMatrix();
+    deck.setMatrixAt(index, dummy.matrix);
+  }
+  scene.add(deck);
+  state.deckMesh = deck;
 }
 
 function buildStumps(block) {
@@ -343,6 +368,15 @@ function buildMachines(block) {
 }
 
 function prepareTrees(block) {
+  const row = 22;
+  block.trees.sort((left, right) => {
+    const rowLeft = Math.floor((left.z + 10000) / row);
+    const rowRight = Math.floor((right.z + 10000) / row);
+    if (rowLeft !== rowRight) return rowLeft - rowRight;
+    return rowLeft % 2
+      ? right.x - left.x
+      : left.x - right.x;
+  });
   for (let index = 0; index < block.trees.length; index += 1) {
     const tree = block.trees[index];
     const angle = Math.atan2(tree.z, tree.x);
@@ -369,6 +403,38 @@ function updateLogPile(delivered) {
     state.logs.setMatrixAt(index, dummy.matrix);
   }
   state.logs.instanceMatrix.needsUpdate = true;
+}
+
+function updateDeck(count) {
+  if (!state.deckMesh) return;
+  const landing = state.block.landing;
+  for (let index = 0; index < state.deckMesh.count; index += 1) {
+    if (index >= count) {
+      dummy.position.set(0, -10, 0);
+      dummy.scale.set(0, 0, 0);
+    } else {
+      const row = Math.floor(index / 6);
+      const column = index % 6;
+      dummy.position.set(
+        landing[0] - 26 + column * 3.2,
+        0.45 + row * 0.55,
+        landing[1] - 8 + row * 2.4
+      );
+      dummy.rotation.set(Math.PI / 2, 0.08 * index, 0);
+      dummy.scale.set(1, 5.5, 1);
+    }
+    dummy.updateMatrix();
+    state.deckMesh.setMatrixAt(index, dummy.matrix);
+  }
+  state.deckMesh.instanceMatrix.needsUpdate = true;
+}
+
+function hideTree(index) {
+  const hidden = new THREE.Matrix4().makeScale(0, 0, 0);
+  state.trunk.setMatrixAt(index, hidden);
+  state.crown.setMatrixAt(index, hidden);
+  state.trunk.instanceMatrix.needsUpdate = true;
+  state.crown.instanceMatrix.needsUpdate = true;
 }
 
 function setStump(index) {
@@ -404,10 +470,22 @@ function updateAnimation(delta) {
     setTree(fall.index, fall.angle);
     if (fall.angle >= Math.PI / 2) fall.done = true;
   }
-  const delivered = Math.floor(state.felled / 6);
-  if (delivered !== state.delivered) {
-    state.delivered = delivered;
-    updateLogPile(delivered);
+  const skidTarget = Math.floor(state.felled / 6) * 6;
+  if (skidTarget > state.skidded && state.simTime >= state.nextSkid) {
+    while (state.skidded < skidTarget) {
+      hideTree(state.skidded);
+      state.skidded += 1;
+    }
+    state.deck += 6;
+    state.nextSkid = state.simTime + 1.4;
+    updateDeck(state.deck);
+  }
+  if (state.deck > 0 && state.simTime >= state.nextProcess) {
+    state.deck -= 1;
+    state.processed += 1;
+    state.nextProcess = state.simTime + 0.55;
+    updateDeck(state.deck);
+    updateLogPile(state.processed * 3);
   }
   const current = Math.min(state.felled, total - 1);
   const tree = state.block.trees[current];
@@ -432,14 +510,15 @@ function updateAnimation(delta) {
   if (state.processor) {
     state.processor.rotation.y = Math.sin(state.simTime * 2.4) * 0.25;
   }
-  const active = state.felled - state.delivered * 6;
-  const phaseLabel = state.felled >= total
+  const phaseLabel = state.processed >= total
     ? 'Complete'
-    : active > 0 ? 'Felling / skidding' : 'Felling';
+    : state.deck > 0 ? 'Felling / skidding / processing' : 'Felling';
   $('phase-label').textContent = phaseLabel;
   $('felled-label').textContent = state.felled + ' / ' + total + ' trees felled';
-  $('delivered-label').textContent = state.delivered + ' stems at landing';
-  $('logs-label').textContent = state.delivered * 3 + ' logs';
+  $('ground-label').textContent =
+    Math.max(0, state.felled - state.skidded) + ' on ground';
+  $('delivered-label').textContent = state.deck + ' stems on deck';
+  $('logs-label').textContent = state.processed * 3 + ' logs processed';
   if (state.felled >= total && state.playing) {
     state.playing = false;
     $('play-button').textContent = '▶ Play';
@@ -449,7 +528,11 @@ function updateAnimation(delta) {
 function resetAnimation() {
   state.simTime = 0;
   state.felled = 0;
-  state.delivered = 0;
+  state.skidded = 0;
+  state.processed = 0;
+  state.deck = 0;
+  state.nextSkid = 0;
+  state.nextProcess = 0;
   state.falling = [];
   state.playing = true;
   $('play-button').textContent = '❚❚ Pause';
@@ -469,10 +552,23 @@ function resetAnimation() {
   state.stumps.instanceMatrix.needsUpdate = true;
   state.logs.instanceMatrix.needsUpdate = true;
   updateLogPile(0);
+  updateDeck(0);
 }
 
 function buildBlock(block) {
   state.block = block;
+  window.__theatre = { camera, controls, state, scene };
+  const extent = block.rings[0].reduce(
+    (value, point) => Math.max(value, Math.abs(point[0]), Math.abs(point[1])),
+    0
+  );
+  const ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(extent * 12, extent * 12),
+    new THREE.MeshStandardMaterial({ color: 0x0b1d16, roughness: 1 })
+  );
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = -0.15;
+  scene.add(ground);
   window.__theatre = { camera, controls, state, scene };
   prepareTrees(block);
   buildGround(block);
@@ -480,14 +576,10 @@ function buildBlock(block) {
   buildLogs(block);
   buildStumps(block);
   buildMachines(block);
-  const extent = block.rings[0].reduce(
-    (value, point) => Math.max(value, Math.abs(point[0]), Math.abs(point[1])),
-    0
-  );
-  const distance = Math.max(90, extent * 1.15);
-  camera.position.set(distance * 0.55, distance * 0.72, distance * 0.55);
-  controls.target.set(0, 0, 0);
-  controls.maxDistance = Math.max(180, distance * 2.5);
+  const distance = Math.max(60, extent * 0.55);
+  camera.position.set(distance * 0.55, distance * 0.65, distance * 0.55);
+  controls.target.set(0, 8, 0);
+  controls.maxDistance = Math.max(140, distance * 2.8);
   controls.update();
   $('block-label').textContent = block.label;
   $('area-label').textContent = block.area_ha.toFixed(1) + ' ha';
@@ -591,7 +683,8 @@ def render_theatre(
   </header>
   <aside class="theatre-legend">
     <div><span class="swatch" style="background:#2f7d4a"></span> Standing tree</div>
-    <div><span class="swatch" style="background:#b45309"></span> Felled stem</div>
+    <div><span class="swatch" style="background:#b45309"></span> Unprocessed deck</div>
+    <div><span class="swatch" style="background:#5b3a24"></span> Processed logs</div>
     <div><span class="swatch" style="background:#f59e0b"></span> Feller-buncher</div>
     <div><span class="swatch" style="background:#38bdf8"></span> Grapple skidder</div>
     <div><span class="swatch" style="background:#34d399"></span> Processor</div>
@@ -611,13 +704,14 @@ def render_theatre(
     </div>
     <div class="theatre-hud">
       <span><strong id="felled-label">0 trees felled</strong></span>
-      <span><strong id="delivered-label">0 stems at landing</strong></span>
-      <span><strong id="logs-label">0 logs</strong></span>
+      <span><strong id="ground-label">0 on ground</strong></span>
+      <span><strong id="delivered-label">0 stems on deck</strong></span>
+      <span><strong id="logs-label">0 logs processed</strong></span>
       <span><strong>Illustrative machine choreography</strong></span>
     </div>
     <p class="theatre-note">Synthetic tree layout inside the real block polygon.
-    The machine movements are illustrative, not a FHOPS solve. Drag to orbit,
-    scroll to zoom.</p>
+    The machine movements are illustrative, not a FHOPS solve. No ALS terrain
+    or step map is included. Drag to orbit, scroll to zoom.</p>
   </section>
   {script}
 </body>

@@ -85,10 +85,12 @@ let day = 1;
 let makespan = 1;
 let timer = null;
 let orbit = null;
-let follow = true;
+let follow = false;
 let lastActiveKey = '';
+let lastYear = 0;
 let byLabel = {};
 let eventsByDay = new Map();
+let blockYears = new Map();
 let machineMarkers = {};
 let heightScale = 1.4;
 const machineColors = { H1: '#fb923c', H2: '#22d3ee', H3: '#a78bfa', H4: '#f43f5e' };
@@ -159,6 +161,26 @@ function fitActive(force = false) {
   });
 }
 
+function fitYear(force = false) {
+  if (!map || !blocks) return;
+  const year = Math.min(10, Math.ceil(day / 365));
+  if (!force && year === lastYear) return;
+  lastYear = year;
+  const start = (year - 1) * 365 + 1;
+  const end = year * 365;
+  const labels = new Set();
+  for (const event of timeline.events) {
+    if (event.day >= start && event.day <= end) labels.add(event.block);
+  }
+  const targets = blocks.features.filter(
+    (feature) => labels.has(feature.properties.label)
+  );
+  if (!targets.length) return;
+  map.fitBounds(blockBounds({ features: targets }), {
+    padding: 110, pitch: 58, bearing: -24, duration: 900, maxZoom: 14,
+  });
+}
+
 function updateTracks() {
   const sequences = {};
   for (const event of timeline.events) {
@@ -193,36 +215,48 @@ function updateDay(next) {
   const activeEvents = eventsByDay.get(day) || [];
   const activeLabels = new Set(activeEvents.map((event) => event.block));
   const first = activeEvents[0];
-  $('follow-label').textContent = first ? 'Following ' + first.block : 'Following —';
+  $('follow-label').textContent = follow
+    ? (first ? 'Following ' + first.block : 'Following —')
+    : 'Year ' + Math.min(10, Math.ceil(day / 365)) + ' overview';
   for (const feature of blocks.features) {
     feature.properties.active = activeLabels.has(feature.properties.label);
+    const featureYear = Math.min(10, Math.ceil(day / 365));
+    feature.properties.year_active = Boolean(
+      blockYears.get(feature.properties.label)?.has(featureYear)
+    );
+    feature.properties.finished = (
+      Number(feature.properties.last_event_day || 0) < day
+    );
   }
   const source = map.getSource('blocks');
   if (source) source.setData(blocks);
   updateTracks();
-  map.setFilter('blocks-future', dayFilter('future'));
-  map.setFilter('blocks-progress', [
-    'all', ['<=', ['get', 'first_day'], day],
-    ['>=', ['get', 'last_day'], day],
-    ['!=', ['get', 'active'], true],
-  ]);
+  map.setFilter('blocks-future', ['==', ['get', 'year_active'], true]);
   map.setFilter('blocks-active', ['==', ['get', 'active'], true]);
-  map.setFilter('blocks-done', dayFilter('done'));
+  map.setFilter('blocks-done', ['all', ['==', ['get', 'finished'], true],
+    ['==', ['get', 'year_active'], true]]);
   const active = updateMachines();
   let done = 0;
   let doneVolume = 0;
   for (const feature of blocks.features) {
-    if (Number(feature.properties.last_day) < day) {
+    if (feature.properties.finished) {
       done += 1;
       doneVolume += Number(feature.properties.volume_m3) || 0;
     }
   }
-  $('day-label').textContent = 'Day ' + day + ' / ' + makespan;
+  const year = makespan > 1000 ? ' · Year ' + Math.min(10, Math.ceil(day / 365)) : '';
+  $('day-label').textContent = 'Day ' + day + ' / ' + makespan + year;
+  const yearValue = (Math.min(10, Math.ceil(day / 365)) - 1) * 365 + 1;
+  const yearSelect = $('year-select');
+  if (yearSelect && yearSelect.value !== String(yearValue)) {
+    yearSelect.value = String(yearValue);
+  }
   $('active-label').textContent = active + ' machines active';
   $('done-label').textContent = done + ' blocks harvested';
   $('volume-label').textContent =
     Math.round(doneVolume).toLocaleString() + ' m³ harvested';
-  fitActive();
+  if (follow) fitActive();
+  else fitYear();
 }
 
 function stopPlay() {
@@ -268,10 +302,12 @@ function toggleOrbit() {
 
 function resetView() {
   stopPlay();
-  follow = true;
+  follow = false;
   lastActiveKey = '';
-  $('follow-button').textContent = 'Follow on';
+  lastYear = 0;
+  $('follow-button').textContent = 'Follow off';
   updateDay(1);
+  fitYear(true);
 }
 
 function toggleFollow() {
@@ -283,12 +319,8 @@ function toggleFollow() {
     $('follow-label').textContent = 'Following —';
     fitActive(true);
   } else {
-    $('follow-label').textContent = 'Overview';
-    if (blocks) {
-      map.fitBounds(blockBounds(blocks), {
-        padding: 90, pitch: 58, bearing: -24, duration: 800,
-      });
-    }
+    lastYear = 0;
+    fitYear(true);
   }
 }
 
@@ -321,19 +353,18 @@ function studioLayers() {
                'line-width': 2, 'line-opacity': 0.45,
                'line-dasharray': [2, 2] } },
     { id: 'blocks-future', type: 'fill-extrusion', source: 'blocks',
-      filter: dayFilter('future'),
-      paint: { 'fill-extrusion-color': '#475569',
-               'fill-extrusion-opacity': 0.45,
-               'fill-extrusion-height': ['*', ['get', 'height'], 0.28] } },
+      filter: ['==', ['get', 'year_active'], true],
+      paint: { 'fill-extrusion-color': '#5f8f78',
+               'fill-extrusion-opacity': 0.7,
+               'fill-extrusion-height': ['*', ['get', 'height'], 0.16] } },
     { id: 'blocks-progress', type: 'fill-extrusion', source: 'blocks',
-      filter: ['all', ['<=', ['get', 'first_day'], 1],
-               ['>=', ['get', 'last_day'], 1],
-               ['!=', ['get', 'active'], true]],
+      filter: ['==', ['get', 'never'], true],
       paint: { 'fill-extrusion-color': '#b45309',
-               'fill-extrusion-opacity': 0.5,
+               'fill-extrusion-opacity': 0.0,
                'fill-extrusion-height': ['*', ['get', 'height'], 0.5] } },
     { id: 'blocks-done', type: 'fill-extrusion', source: 'blocks',
-      filter: dayFilter('done'),
+      filter: ['all', ['==', ['get', 'finished'], true],
+               ['==', ['get', 'year_active'], true]],
       paint: { 'fill-extrusion-color': '#14b8a6',
                'fill-extrusion-opacity': 0.8,
                'fill-extrusion-height': ['*', ['get', 'height'], 0.7] } },
@@ -387,9 +418,25 @@ function init(data) {
   for (const event of timeline.events) {
     if (!eventsByDay.has(event.day)) eventsByDay.set(event.day, []);
     eventsByDay.get(event.day).push(event);
+    const eventYear = Math.min(10, Math.ceil(event.day / 365));
+    if (!blockYears.has(event.block)) blockYears.set(event.block, new Set());
+    blockYears.get(event.block).add(eventYear);
+    const previous = byLabel[event.block]?.properties.last_event_day || 0;
+    if (byLabel[event.block]) {
+      byLabel[event.block].properties.last_event_day = Math.max(previous, event.day);
+    }
   }
   makespan = Math.max(1, Number(timeline.makespan_day) || 1);
   $('day-range').max = makespan;
+  const yearSelect = $('year-select');
+  yearSelect.replaceChildren();
+  for (let year = 1; year <= Math.min(10, Math.ceil(makespan / 365)); year += 1) {
+    const option = document.createElement('option');
+    option.value = String((year - 1) * 365 + 1);
+    option.textContent = String(year);
+    yearSelect.appendChild(option);
+  }
+  if (makespan > 1000) $('speed-select').value = '15';
   const style = buildStyle(data.baseStyle);
   map = new maplibregl.Map({
     container: 'studio-map',
@@ -439,6 +486,10 @@ function init(data) {
     stopPlay();
     updateDay(Number(event.target.value));
   });
+  $('year-select').addEventListener('change', (event) => {
+    stopPlay();
+    updateDay(Number(event.target.value));
+  });
   $('play-button').addEventListener('click', togglePlay);
   $('reset-button').addEventListener('click', resetView);
   $('follow-button').addEventListener('click', toggleFollow);
@@ -483,6 +534,25 @@ def render_studio(
     safe_subtitle = html.escape(subtitle)
     horizon = summary.get("horizon_days") or 0
     volume = summary.get("total_production_m3") or 0
+    plan_kind = summary.get("plan_kind")
+    if plan_kind in ("rolling10", "multiyear"):
+        plan_text = f"ten-year multi-year plan · {horizon:,.0f}-day horizon"
+        volume_label = "10-year harvested"
+        note = (
+            "Prototype animation of a ten-year multi-year FHOPS plan. Each "
+            "year is an optimized 180-day annual season; the active blocks "
+            "change by year. It is not a production schedule. Drag to orbit, "
+            "scroll to zoom."
+        )
+    else:
+        plan_text = f"first-period pilot, compressed into a {horizon:,.0f}-day horizon"
+        volume_label = "10-year period volume"
+        note = (
+            f"Prototype animation of the first-period FHOPS plan. The pilot "
+            f"compresses ten years of AAC volume into a {horizon:,.0f}-day "
+            "horizon; it is not a production schedule. Drag to orbit, scroll "
+            "to zoom."
+        )
     script = STUDIO_JS.replace("__SLUG__", safe_slug)
     return f"""<!doctype html>
 <html lang="en">
@@ -500,8 +570,7 @@ def render_studio(
     <div class="studio-title">
       <p class="studio-kicker">FHOPS · 3D harvest studio</p>
       <h1>{safe_label}</h1>
-      <p>{safe_file_id} · {safe_subtitle} · first-period pilot, compressed
-      into a {horizon:,.0f}-day horizon</p>
+      <p>{safe_file_id} · {safe_subtitle} · {plan_text}</p>
     </div>
     <div class="studio-actions">
       <a href="/fhops/{safe_slug}/theatre">Tree-scale theatre</a>
@@ -521,7 +590,7 @@ def render_studio(
     <div class="studio-controls">
       <button id="play-button" class="primary" type="button">▶ Play</button>
       <button id="reset-button" type="button">Reset view</button>
-      <button id="follow-button" type="button">Follow on</button>
+      <button id="follow-button" type="button">Follow off</button>
       <button id="orbit-button" type="button">Orbit</button>
       <label for="height-range">Height</label>
       <input id="height-range" type="range" min="0.6" max="3" step="0.2"
@@ -531,7 +600,11 @@ def render_studio(
         <option value="180">1×</option>
         <option value="90" selected>2×</option>
         <option value="35">5×</option>
+        <option value="15">10×</option>
+        <option value="6">25×</option>
       </select>
+      <label for="year-select">Year</label>
+      <select id="year-select" aria-label="Plan year"></select>
       <input id="day-range" type="range" min="1" max="1" value="1"
              aria-label="Harvest day">
       <span id="day-label">Day 1</span>
@@ -542,11 +615,9 @@ def render_studio(
       <span><strong id="done-label">0 blocks harvested</strong></span>
       <span><strong id="volume-label">0 m³ harvested</strong></span>
       <span><strong>{aac_m3 or 0:,.0f} m³/yr</strong> annual AAC</span>
-      <span><strong>{volume:,.0f} m³</strong> 10-year period volume</span>
+      <span><strong>{volume:,.0f} m³</strong> {volume_label}</span>
     </div>
-    <p class="studio-note">Prototype animation of the first-period FHOPS plan.
-    The pilot compresses ten years of AAC volume into a {horizon:,.0f}-day
-    horizon; it is not a production schedule. Drag to orbit, scroll to zoom.</p>
+    <p class="studio-note">{note}</p>
   </section>
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
   {script}
