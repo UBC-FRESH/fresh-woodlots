@@ -1,6 +1,6 @@
 # Cloudflare Access handoff
 
-Status: **Access app verified; origin verification pending**  
+Status: **origin verified by operator; OTP allowlist test pending**  
 Hostname: `https://fresh-woodlotsbc.01101.dev`
 
 The container is ready:
@@ -15,11 +15,14 @@ non-GET/HEAD/OPTIONS -> 403
 The hostname resolves and the Cloudflare Access application exists. An
 unauthenticated request returns **302** to
 `ubc-fresh.cloudflareaccess.com` with app title **“Log in to
-fresh-woodlotsbc”**. The remaining check is whether the authenticated origin is
-this container's **8795** service.
+fresh-woodlotsbc”**.
+
+The operator has logged in and confirmed the authenticated origin is the
+Woodlots BC portal. The remaining access check is the **One-time PIN email
+allowlist**, which needs a real allowlisted Woodlots BC user.
 
 The container does not have root-host SSH access or a Cloudflare API token, so
-it cannot inspect the origin or create a service token.
+it cannot inspect the Access policy or create a service token.
 
 ## 1. Root-host ingress
 
@@ -127,7 +130,41 @@ Then check:
 - `/treelab/?case=w0026-61&run=demo-1`;
 - `POST /instance/wl-w0026/api/runs` returns **403** (read-only guard).
 
-## 4. After the Access-protected review
+## 4. One-time PIN acceptance test
+
+Use an incognito window and a real Woodlots BC address that is on the allowlist.
+
+1. Open `https://fresh-woodlotsbc.01101.dev/`.
+2. Choose the email / One-time PIN login option.
+3. Enter the exact allowlisted address.
+4. Confirm the PIN email arrives and enter it.
+5. The landing page should load, not the Access login page again.
+6. Check `/health`:
+
+```json
+{
+  "status": "ok",
+  "instances": 845,
+  "ready": 798,
+  "buildable": 798,
+  "pending_aac": 47,
+  "read_only": true,
+  "demo_mode": false
+}
+```
+
+7. Open `/instance/wl-w0026/`, `/fhops/wl-w0026`, and
+   `/treelab/?case=w0026-61&run=demo-1`.
+8. Confirm the read-only UI is present and no Solve/run controls can start a
+   job.
+
+Then test a non-allowlisted address. It should be rejected by Access and must
+not reach the portal.
+
+Record the result in `RELEASE-READINESS.md` before removing Access or opening
+the portal publicly.
+
+## 5. After the Access-protected review
 
 If Woodlots BC approves a public launch:
 
@@ -139,7 +176,7 @@ If Woodlots BC approves a public launch:
 
 Do not remove Access before the public review is signed off.
 
-## 5. What the container cannot do
+## 6. What the container cannot do
 
 - inspect or change the root-host tunnel/nginx origin;
 - inspect or change the Cloudflare Access application without an API token;

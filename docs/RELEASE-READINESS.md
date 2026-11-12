@@ -1,8 +1,8 @@
 # Release readiness
 
 Date: 2026-11-12  
-Status: **release candidate, live in read-only mode; Access mapping pending**  
-Tag: `v0.9.0-rc1`
+Status: **release candidate, live read-only behind Cloudflare Access; OTP allowlist test pending**  
+Tag: `v0.9.0-rc2`
 
 ## What passed
 
@@ -18,6 +18,9 @@ Tag: `v0.9.0-rc1`
 | Tree Lab demo cases | **3 / 3** |
 | Portal healthcheck | passed |
 | Read-only smoke test | passed; write endpoints return **403** |
+| Public hostname | `fresh-woodlotsbc.01101.dev`, Access **302** unauthenticated |
+| Authenticated origin | confirmed by operator |
+| OTP email allowlist | **pending a real Woodlots BC user** |
 | BCCFA portal | **62 / 62**, untouched |
 | Sphinx docs | published |
 
@@ -66,8 +69,9 @@ See [`aac/CALIBRATION-AUDIT.md`](aac/CALIBRATION-AUDIT.md) and
    PUBLIC_READ_ONLY=1
    DEMO_MODE=0
    ```
-   The hostname and Cloudflare Access application exist, but authenticated
-   origin verification is still pending. See
+   The hostname and Cloudflare Access application exist, and the operator has
+   confirmed the authenticated origin is the Woodlots BC portal. The One-time
+   PIN email allowlist still needs a real Woodlots BC user. See
    [`CLOUDFLARE-ACCESS.md`](CLOUDFLARE-ACCESS.md).
 
 2. **Public hostname.** `https://fresh-woodlotsbc.01101.dev` resolves and
@@ -94,8 +98,9 @@ See [`aac/CALIBRATION-AUDIT.md`](aac/CALIBRATION-AUDIT.md) and
 - [x] calibration method decision documented;
 - [x] portal switched to read-only and write guard verified;
 - [x] hostname resolves and Cloudflare Access returns 302;
-- [ ] authenticated origin verified as this container's 8795 service;
-- [ ] service-token health check through Access;
+- [x] authenticated origin verified by operator;
+- [ ] OTP allowlist login tested with a Woodlots BC user;
+- [ ] non-allowlisted address rejected;
 - [ ] Access removed after public review (if approved);
 - [ ] release tag updated after the access decision.
 
