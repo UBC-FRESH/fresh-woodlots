@@ -1,5 +1,14 @@
 # Release notes
 
+## v0.9.0-rc9 — 2026-11-12
+
+- Removed the chaotic dotted machine tracks from the 3D harvest studio.
+- Enabled the WS4 **Ask** LLM assistant behind Cloudflare Access.
+- Chat is the only non-GET exception to the portal read-only guard; all other
+  writes remain blocked.
+- The assistant runs the OpenCode CLI as the service user with the selected
+  instance directory as its working directory.
+
 ## v0.9.0-rc8 — 2026-11-12
 
 Rebuilt the remaining 64 FHOPS area-check cases with all compiled WS4 blocks.

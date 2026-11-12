@@ -136,12 +136,15 @@ The systemd unit is `deploy/freshwl-portal.container.service`, installed as
 ```text
 PUBLIC_READ_ONLY=1
 DEMO_MODE=0
+ALLOW_LLM_ASSISTANT=1
 ```
 
 The portal rejects all non-GET/HEAD/OPTIONS requests, including WS4 searches
-and Tree Lab run starts. The application tree is mounted read-only for the
-service. A write-enabled demo can be restored temporarily by reverting the
-unit and restarting it behind Cloudflare Access.
+and Tree Lab run starts. The only exception is the authenticated
+`/instance/*/api/chat` endpoint for the WS4 **Ask** assistant. The application
+tree is mounted read-only for the service. A write-enabled demo can be
+restored temporarily by reverting the unit and restarting it behind Cloudflare
+Access.
 
 ## Caveats
 

@@ -39,7 +39,8 @@ Each featured pilot has:
    line.
 3. Open the W0026 **10-year plan**, then the **3D block studio**.
 4. Open the **Tree Lab** and press play.
-5. Read **Sources & methods** and the **How to read this portal** guide.
+5. Open **Ask** in the WS4 model for the LLM assistant.
+6. Read **Sources & methods** and the **How to read this portal** guide.
 
 ## What it is not
 

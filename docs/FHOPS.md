@@ -58,7 +58,7 @@ area:
 - **0** are above 5,000 m³/ha;
 - no instance has a missing selected area.
 
-All 70 flagged pilots were rebuilt with the all-block candidate pool. The
+All 76 flagged pilots were rebuilt with the all-block candidate pool. The
 portal now shows no **⚠ area check** cards. The audit remains in place so a
 future rebuild or data refresh can reintroduce the flag immediately.
 

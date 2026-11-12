@@ -28,6 +28,7 @@ from .fhops_theatre import render_theatre
 ROOT = Path(__file__).resolve().parents[1]
 PUBLIC_READ_ONLY = os.environ.get("PUBLIC_READ_ONLY", "0") == "1"
 DEMO_MODE = os.environ.get("DEMO_MODE", "0") == "1"
+LLM_ASSISTANT = os.environ.get("ALLOW_LLM_ASSISTANT", "0") == "1"
 INSTANCES_ROOT = ROOT / "instances"
 QUEUE_PATH = ROOT / "queue" / "woodlot_build_queue.json"
 MARKDOWN = (
@@ -135,6 +136,9 @@ class LazyWS4:
                     ),
                     initial_schedule=initial if initial.exists() else None,
                     allow_runs=DEMO_MODE and not PUBLIC_READ_ONLY,
+                    allow_agent=LLM_ASSISTANT,
+                    agent_cwd=root,
+                    agent_timeout=300.0,
                     geometry=root / "ws4" / "geometry" / "blocks.geojson",
                     geometry_overview=(
                         overview if overview.exists() else None
@@ -294,6 +298,11 @@ if PUBLIC_READ_ONLY:
     async def read_only_guard(request: Any, call_next: Any) -> Any:
         """Reject writes at the portal boundary, including mounted apps."""
         if request.method not in ("GET", "HEAD", "OPTIONS"):
+            path = request.url.path
+            if LLM_ASSISTANT and path.startswith("/instance/") and path.endswith(
+                "/api/chat"
+            ):
+                return await call_next(request)
             return JSONResponse(
                 {"detail": "this service is read-only"},
                 status_code=403,
@@ -627,6 +636,7 @@ async def health() -> JSONResponse:
             ),
             "read_only": PUBLIC_READ_ONLY,
             "demo_mode": DEMO_MODE,
+            "assistant": LLM_ASSISTANT,
         }
     )
 

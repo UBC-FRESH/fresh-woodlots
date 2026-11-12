@@ -27,8 +27,13 @@ The unit uses the newer WS4 UI:
 PYTHONPATH=/srv/shared-data/gep/ws4/ws4-public-demo:/srv/shared-data/gep/ws4/fresh-woodlots:/srv/shared-data/gep/ws4/fhops-ground-support:/srv/shared-data/gep/ws4/fhops-ground-support/src
 PUBLIC_READ_ONLY=1
 DEMO_MODE=0
+ALLOW_LLM_ASSISTANT=1
 WS4_OVERVIEW_ZOOM=0
 ```
+
+The assistant needs `opencode` on PATH; the unit adds
+`/home/gep/.opencode/bin`. Disable it with `ALLOW_LLM_ASSISTANT=0` if the
+service is opened beyond the trusted pilot group.
 
 For a temporary write-enabled demo behind Cloudflare Access:
 

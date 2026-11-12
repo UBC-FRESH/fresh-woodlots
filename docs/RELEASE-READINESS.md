@@ -1,8 +1,8 @@
 # Release readiness
 
 Date: 2026-11-12  
-Status: **release candidate, live read-only behind Cloudflare Access; OTP allowlist test pending**  
-Tag: `v0.9.0-rc8`
+Status: **release candidate, read-only models plus Access-gated LLM assistant; OTP allowlist test pending**
+Tag: `v0.9.0-rc9`
 
 ## What passed
 
@@ -19,7 +19,8 @@ Tag: `v0.9.0-rc8`
 | Portal population QA | **0 failures** |
 | Tree Lab demo cases | **3 / 3** |
 | Portal healthcheck | passed |
-| Read-only smoke test | passed; write endpoints return **403** |
+| Read-only smoke test | passed; write endpoints return **403**, except chat |
+| LLM assistant | enabled for authenticated Access users; API chat test passed |
 | Public hostname | `fresh-woodlotsbc.01101.dev`, Access **302** unauthenticated |
 | Authenticated origin | confirmed by operator |
 | OTP email allowlist | **pending a real Woodlots BC user** |
@@ -32,7 +33,12 @@ six portal routes and five required artifacts for every built instance.
 A separate read-only smoke test used `PUBLIC_READ_ONLY=1`, `DEMO_MODE=0` on a
 temporary port. The landing page, a WS4 model, FHOPS, and Tree Lab all returned
 **200**; `POST /api/runs` and `POST /api/search/portfolio` returned **403**.
-The live service was not changed.
+
+The live service now also enables the WS4 LLM assistant
+(`ALLOW_LLM_ASSISTANT=1`). The chat endpoint is the only non-GET exception to
+the read-only guard; it runs the OpenCode CLI as `gep` with the instance
+directory as its working directory. Keep the service behind Cloudflare Access
+while this is enabled.
 
 ## Calibration status
 
@@ -99,6 +105,7 @@ See [`aac/CALIBRATION-AUDIT.md`](aac/CALIBRATION-AUDIT.md) and
 - [x] docs published;
 - [x] calibration method decision documented;
 - [x] portal switched to read-only and write guard verified;
+- [x] LLM assistant enabled behind Access and chat tested;
 - [x] hostname resolves and Cloudflare Access returns 302;
 - [x] authenticated origin verified by operator;
 - [ ] OTP allowlist login tested with a Woodlots BC user;

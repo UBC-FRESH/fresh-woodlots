@@ -1,7 +1,7 @@
 # Woodlots BC portal hosting plan
 
 Date: 2026-11-12
-Status: release candidate / read-only, Access-gated
+Status: release candidate / read-only models, Access-gated LLM assistant
 Scope: all active BC woodlot licences; 845 catalogued, 798 with public AAC.
 
 ## 0. Release status
@@ -80,10 +80,15 @@ read-only WS4 UI.
 
 ## 5. Security boundaries
 
-- no public shell, no OpenCode agent, no uploads;
+- no public shell or uploads;
+- the LLM assistant is enabled only for authenticated Access users. It runs
+  the OpenCode CLI as the service user with the per-instance directory as its
+  working directory. It is not a public unauthenticated agent; disable it by
+  removing `ALLOW_LLM_ASSISTANT=1` from the unit;
 - no raw TIPSY tables or government model bundles redistributed;
 - no claim of statutory timber supply analysis;
-- public mode rejects every non-GET/HEAD/OPTIONS request at the portal boundary;
+- public mode rejects every non-GET/HEAD/OPTIONS request at the portal boundary,
+  except authenticated `/instance/*/api/chat` for the LLM assistant;
   Cloudflare Access remains the identity gate until the public review;
 - health check: `scripts/healthcheck.sh http://127.0.0.1:8795`.
 

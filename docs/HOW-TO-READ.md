@@ -49,6 +49,15 @@ The model page is a strategic, long-horizon view:
 The model is built from public VRI, Proxy THLB, VDYP, TIPSY, and FEMIC curves.
 It is not a replacement for the licence's management plan.
 
+## Ask assistant
+
+The WS4 model page has an **Ask** control. It is an LLM assistant with access
+to the selected instance and the OpenCode tools. Treat it as an authenticated
+pilot assistant, not an authoritative interpreter of the model.
+
+The assistant is the only write-like exception in the otherwise read-only
+portal. Access to the portal is therefore the security boundary.
+
 ## FHOPS page
 
 Most woodlots have a **first-period, rate-fixed pilot**. The volume is often

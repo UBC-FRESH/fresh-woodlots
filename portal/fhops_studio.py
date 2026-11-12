@@ -185,31 +185,6 @@ function fitYear(force = false) {
   });
 }
 
-function updateTracks() {
-  const sequences = {};
-  for (const event of timeline.events) {
-    if (event.day > day) continue;
-    const block = byLabel[event.block];
-    if (!block) continue;
-    const point = [Number(block.properties.centroid_lon),
-                   Number(block.properties.centroid_lat)];
-    const sequence = sequences[event.machine] || [];
-    const last = sequence[sequence.length - 1];
-    if (!last || last[0] !== point[0] || last[1] !== point[1]) {
-      sequence.push(point);
-    }
-    sequences[event.machine] = sequence;
-  }
-  const features = Object.entries(sequences)
-    .filter(([, coords]) => coords.length > 1)
-    .map(([machine, coordinates]) => ({
-      type: 'Feature', properties: { machine },
-      geometry: { type: 'LineString', coordinates },
-    }));
-  const source = map.getSource('tracks');
-  if (source) source.setData({ type: 'FeatureCollection', features });
-}
-
 function updateDay(next) {
   if (!map || !blocks) return;
   makespan = Math.max(1, Number(timeline.makespan_day) || 1);
@@ -234,7 +209,6 @@ function updateDay(next) {
   }
   const source = map.getSource('blocks');
   if (source) source.setData(blocks);
-  updateTracks();
   map.setFilter('blocks-future', ['==', ['get', 'year_active'], true]);
   map.setFilter('blocks-active', ['==', ['get', 'active'], true]);
   map.setFilter('blocks-done', ['all', ['==', ['get', 'finished'], true],
@@ -350,12 +324,6 @@ function fallbackStyle() {
 
 function studioLayers() {
   return [
-    { id: 'tracks', type: 'line', source: 'tracks',
-      paint: { 'line-color': ['match', ['get', 'machine'],
-                 'H1', '#fb923c', 'H2', '#22d3ee', 'H3', '#a78bfa',
-                 'H4', '#f43f5e', '#94a3b8'],
-               'line-width': 2, 'line-opacity': 0.45,
-               'line-dasharray': [2, 2] } },
     { id: 'blocks-future', type: 'fill-extrusion', source: 'blocks',
       filter: ['==', ['get', 'year_active'], true],
       paint: { 'fill-extrusion-color': '#5f8f78',
@@ -388,9 +356,6 @@ function buildStyle(base) {
   const style = base ? JSON.parse(JSON.stringify(base)) : fallbackStyle();
   style.sources = style.sources || {};
   style.sources.blocks = { type: 'geojson', data: blocks };
-  style.sources.tracks = {
-    type: 'geojson', data: { type: 'FeatureCollection', features: [] },
-  };
   style.layers = (style.layers || []).concat(studioLayers());
   return style;
 }

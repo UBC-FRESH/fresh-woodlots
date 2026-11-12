@@ -170,7 +170,8 @@ If Woodlots BC approves a public launch:
 
 1. Remove the Access application or add the approved public policy.
 2. Add a Cloudflare WAF/rate limit for `/api/` and `/instance/`.
-3. Keep the portal read-only permanently for public traffic.
+3. Keep the models read-only permanently for public traffic. Decide separately
+   whether the LLM assistant remains enabled; it is not a read-only feature.
 4. Re-run `scripts/qa_portal_population.py` and `scripts/healthcheck.sh`.
 5. Record the change in `RELEASE-READINESS.md`.
 
