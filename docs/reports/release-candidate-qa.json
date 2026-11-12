@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-12T14:48:03Z",
+  "generated_at": "2026-11-12T15:04:58Z",
   "base": "http://127.0.0.1:8795",
   "instances": 798,
   "failures": 0,
-  "elapsed_s": 16.4,
+  "elapsed_s": 23.6,
   "checks": 11,
   "read_only": true,
   "write_checks": [
