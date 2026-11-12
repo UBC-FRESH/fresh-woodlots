@@ -834,6 +834,13 @@ async def landing() -> HTMLResponse:
     ready = sum(1 for item in instances if item.ready)
     pending_aac = sum(1 for item in instances if item.aac_m3 is None)
     cards = "\n".join(_card(instance) for instance in featured + others)
+    tree_lab_action = ""
+    if TREELAB_MOUNTED:
+        tree_lab_action = (
+            '<a class="open secondary" '
+            'href="/treelab/?case=w0026-61&run=demo-1">'
+            "Open Tree Lab 3D</a>"
+        )
     return HTMLResponse(
         f"""<!doctype html>
 <html lang="en">
@@ -855,6 +862,8 @@ async def landing() -> HTMLResponse:
     h1 {{ font-size: clamp(2rem, 4vw, 3.2rem); margin: .4rem 0;
           letter-spacing: -.02em; }}
     .lede {{ color: var(--muted); max-width: 65ch; font-size: 1.05rem; }}
+    .hero-actions {{ display: flex; flex-wrap: wrap; gap: .6rem;
+                     margin-top: 1.2rem; }}
     main {{ max-width: 1100px; margin: 0 auto; padding: 0 1.5rem 3rem; }}
     .map-wrap {{ background: #fff; border: 1px solid var(--line);
                  border-radius: 14px; overflow: hidden; margin-bottom: 1rem; }}
@@ -910,6 +919,10 @@ async def landing() -> HTMLResponse:
     from public data. Models built: {ready}. Licences catalogued with AAC
     pending: {pending_aac}. The three featured pilots are Chinook Woodlots,
     Boomer Enterprises, and Fibre Farms.</p>
+    <div class="hero-actions">
+      <a class="open" href="/fhops/wl-w0026">Open W0026 10-year plan</a>
+      {tree_lab_action}
+    </div>
   </header>
   <main>
     <section class="map-wrap">
