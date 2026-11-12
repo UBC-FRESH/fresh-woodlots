@@ -100,7 +100,7 @@ const camera = new THREE.PerspectiveCamera(
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.08;
-controls.maxPolarAngle = Math.PI * 0.48;
+controls.maxPolarAngle = Math.PI * 0.44;
 controls.minDistance = 8;
 controls.maxDistance = 900;
 
@@ -556,6 +556,19 @@ function resetAnimation() {
   updateDeck(0);
 }
 
+let fitDistance = 0;
+
+function fitView() {
+  if (!state.block || !fitDistance) return;
+  camera.position.set(
+    fitDistance * 0.55,
+    fitDistance * 0.65,
+    fitDistance * 0.55
+  );
+  controls.target.set(0, 8, 0);
+  controls.update();
+}
+
 function buildBlock(block) {
   state.block = block;
   window.__theatre = { camera, controls, state, scene };
@@ -578,10 +591,10 @@ function buildBlock(block) {
   buildStumps(block);
   buildMachines(block);
   const distance = Math.max(60, extent * 0.55);
-  camera.position.set(distance * 0.55, distance * 0.65, distance * 0.55);
-  controls.target.set(0, 8, 0);
-  controls.maxDistance = Math.max(140, distance * 2.8);
-  controls.update();
+  fitDistance = distance;
+  controls.minDistance = Math.max(25, distance * 0.15);
+  controls.maxDistance = Math.max(160, distance * 1.45);
+  fitView();
   $('block-label').textContent = block.label;
   $('area-label').textContent = block.area_ha.toFixed(1) + ' ha';
   $('theatre-loading').hidden = true;
@@ -606,6 +619,7 @@ $('play-button').addEventListener('click', () => {
   $('play-button').textContent = state.playing ? '❚❚ Pause' : '▶ Play';
 });
 $('restart-button').addEventListener('click', resetAnimation);
+$('fit-button').addEventListener('click', fitView);
 $('speed-select').addEventListener('change', (event) => {
   state.speed = Number(event.target.value) || 2;
 });
@@ -694,6 +708,7 @@ def render_theatre(
     <div class="theatre-controls">
       <button id="play-button" class="primary" type="button">❚❚ Pause</button>
       <button id="restart-button" type="button">Restart</button>
+      <button id="fit-button" type="button">Fit view</button>
       <button id="orbit-button" type="button">Orbit</button>
       <label for="speed-select">Speed</label>
       <select id="speed-select">
