@@ -213,12 +213,19 @@ def discover() -> list[Instance]:
             w4w_payload = _read_json(root / "config" / "w4w_calibration.json")
             if w4w_payload:
                 case = (w4w_payload.get("cases") or {}).get("all_vri") or {}
+                factor = case.get("thlb_factor")
                 w4w = {
                     "aac_m3": w4w_payload.get("published_aac_m3_per_year"),
                     "net_area_ha": case.get("net_area_ha"),
-                    "thlb_factor": case.get("thlb_factor"),
+                    "thlb_factor": factor,
                     "max_even_flow_m3": case.get("max_even_flow_m3_per_year"),
                     "pct_proxy_thlb": case.get("netdown_vs_proxy_thlb"),
+                    "warning": (
+                        "method check"
+                        if isinstance(factor, (int, float))
+                        and (factor < 0.4 or factor > 2.0)
+                        else ""
+                    ),
                 }
             runs_root = root / "ws4" / "runs"
             if runs_root.exists():
@@ -634,6 +641,8 @@ def _card(instance: Instance) -> str:
             f"factor {instance.w4w.get('thlb_factor', '—')}, "
             f"{instance.w4w.get('pct_proxy_thlb', 0):.0%} of Proxy THLB"
         )
+        if instance.w4w.get("warning"):
+            w4w_text += " · ⚠ method check"
         w4w_link = f'<a href="/rationale/{instance.slug}">W4W rationale</a>'
     w4w_row = (
         f'<p class="runs">W4W: {html.escape(w4w_text)} · {w4w_link}</p>'

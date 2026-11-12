@@ -9,7 +9,7 @@ base, and timber harvesting land base.
 | Licence | Source | Published GLB | Published AFLB / net | Published THLB | Published AAC | Our AOI | Our VRI area | Our Proxy THLB | Our calibrated net |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|
 | W1674 | Woodlot Management Plan #2 (2024) | 402.0 ha (gross 406.2) | 395.2 ha | **303.8 ha** | 2,425 m³/yr | 406.21 ha | 256.00 ha* | 329.26 ha | **321.05 ha** |
-| W1832 | Management Plan #1 (2000) | 619.4 ha | 479.3 ha** | **398.6 ha** | 1,043 m³/yr | 593.45 ha | 488.48 ha* | 460.06 ha | 105.32 ha† |
+| W1832 | Management Plan #1 (2000) | 619.4 ha | 479.3 ha** | **398.6 ha** | 1,043 m³/yr | 593.45 ha | 488.48 ha* | 460.06 ha | v1 105.32 ha† / **v2 415.67 ha** |
 | W0007 | Management Plan #4 / W4W report (2001) | 275 ha | 275.4 ha net; 261.4 ha netdown | not stated | 2,600 m³/yr (current); 2,672 (2001) | 283.56 ha | 283.56 ha | 226.44 ha | 209.58 ha |
 
 \* Compiled WS4 fragment area, not the full VRI clip. The VRI clip for W1674
@@ -82,7 +82,8 @@ midpoint rather than a local netdown.
 
 The v1 calibration does **not** apply to W1832's partial-cutting regime: it
 solves to 105.32 ha, which is not a credible THLB. This is a model-method
-mismatch, not a land-base result.
+mismatch, not a land-base result. The v2 partial-cut model solves to
+**415.67 ha**, within **+4.3%** of the published 398.6 ha THLB.
 
 ### W0007 — older Woodlot 3 report
 
