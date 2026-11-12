@@ -1,5 +1,11 @@
 # Release notes
 
+## v0.9.0-rc4 — 2026-11-12
+
+Added a tactical validation set for W1674 and W0007, widened the candidate
+block pool to all WS4 blocks, and added the `/benchmarks` portal page. This
+fixed the W1548 compressed-block volume/area issue.
+
 ## v0.9.0-rc3 — 2026-11-12
 
 Status: read-only release candidate behind Cloudflare Access  
