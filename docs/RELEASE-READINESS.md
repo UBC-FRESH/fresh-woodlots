@@ -1,7 +1,8 @@
 # Release readiness
 
 Date: 2026-11-12  
-Status: **release candidate, still in demo mode**
+Status: **release candidate, still in demo mode**  
+Tag: `v0.9.0-rc1`
 
 ## What passed
 
