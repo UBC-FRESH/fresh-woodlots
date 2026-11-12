@@ -46,6 +46,9 @@ FHOPS_CSS = """<style>
            padding: 1rem; margin: 1rem 0; }
   .panel h2 { margin: 0 0 .35rem; font-size: 1.25rem; }
   .hint { color: var(--muted); font-size: .9rem; }
+  .hint.warn { color: #8a4b00; background: #fff7e6;
+               border: 1px solid #f0d29a; border-radius: 9px;
+               padding: .7rem .85rem; }
   #fhops-map { height: 460px; width: 100%; border-radius: 10px;
                background: #eef3ef; margin-top: .8rem; }
   .map-note { margin: .55rem .2rem 0; color: var(--muted); font-size: .82rem; }
@@ -171,11 +174,33 @@ def _fhops_page(instance: Any) -> str:
                 _fmt(summary.get("sequencing_violation_count")),
             ),
         ]
+    selected_area = summary.get("selected_area_ha")
+    volume_per_ha = summary.get("period_volume_per_ha")
+    if selected_area is not None:
+        stats.append(("Selected block area", f"{_fmt(selected_area, 1)} ha"))
+    if volume_per_ha is not None:
+        stats.append(("Volume / selected ha", f"{_fmt(volume_per_ha, 1)} m³/ha"))
     stats_html = "".join(
         f'<div class="stat"><span>{html.escape(label)}</span>'
         f"<strong>{html.escape(value)}</strong></div>"
         for label, value in stats
     )
+    area_warning = ""
+    area_check = summary.get("area_check")
+    if area_check in ("check", "extreme", "missing"):
+        area_warning = (
+            "<p class='hint warn'>⚠ <strong>Area check:</strong> the "
+            f"period volume is {_fmt(period_volume)} m³ over "
+            f"{_fmt(selected_area, 1)} ha of selected blocks"
+            + (
+                f" ({_fmt(volume_per_ha, 1)} m³/ha)."
+                if volume_per_ha is not None
+                else "."
+            )
+            + " The compressed FHOPS selection may be too small. Treat this "
+            "as a screening flag, not a yield result. "
+            "<a href='/benchmarks'>Validation notes</a>.</p>"
+        )
     download_html = "".join(
         f'<li><a href="/fhops/{slug}/download/{name}">{html.escape(name)}</a></li>'
         for name in FHOPS_DOWNLOADS
@@ -282,6 +307,7 @@ def _fhops_page(instance: Any) -> str:
     <section class="panel">
       <h2>Solved block plan</h2>
       {plan_hint}
+      {area_warning}
       {map_html}
     </section>
     <section class="panel">

@@ -712,6 +712,7 @@ def _card(instance: Instance) -> str:
     area = f"{instance.area_ha:,.0f} ha" if instance.area_ha else "pending"
     blocks = f"{instance.blocks:,}" if instance.blocks is not None else "—"
     runs = ", ".join(instance.runs) if instance.runs else "none"
+    fhops_warning = ""
     if instance.fhops:
         plan_kind = instance.fhops.get("plan_kind")
         if plan_kind in (
@@ -729,6 +730,12 @@ def _card(instance: Instance) -> str:
                 f"{instance.fhops.get('completed_blocks', '?')} blocks, "
                 f"{instance.fhops.get('makespan_day', '?')} days"
             )
+        if instance.fhops.get("area_check") in (
+            "check",
+            "extreme",
+            "missing",
+        ):
+            fhops_warning = " · ⚠ area check"
     else:
         fhops = "not run"
     w4w_text = ""
@@ -798,7 +805,7 @@ def _card(instance: Instance) -> str:
         <div><dt>WS4 blocks</dt><dd>{blocks}</dd></div>
       </dl>
       <p class="runs">Runs: {html.escape(runs)}</p>
-      <p class="runs">FHOPS: {html.escape(fhops)}{studio_link}</p>
+      <p class="runs">FHOPS: {html.escape(fhops)}{fhops_warning}{studio_link}</p>
       {w4w_row}
       {actions_html}
     </article>

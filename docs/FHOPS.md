@@ -48,6 +48,23 @@ seasons described below.
 The tree layout is illustrative, not an inventory, and the machine choreography
 is not a FHOPS solve.
 
+## Selected-area audit
+
+The first-period pilots compress ten years of AAC into a short horizon. A
+population audit compares the period volume with the selected scheduled block
+area:
+
+- **71** instances are above 1,000 m³ per selected hectare;
+- **5** are above 5,000 m³/ha;
+- no instance has a missing selected area.
+
+Those cases are labeled **⚠ area check** in the portal. The label is a
+screening prompt, not a yield result. The featured tactical plans now use all
+compiled WS4 blocks and generally sit near 90–120 m³/ha for the ten-year
+volume.
+
+See [`FHOPS-AREA-AUDIT.md`](FHOPS-AREA-AUDIT.md) for the full table.
+
 ## Tree Lab
 
 `/treelab/` mounts the experimental FHOPS Tree Lab sandbox. The three featured
