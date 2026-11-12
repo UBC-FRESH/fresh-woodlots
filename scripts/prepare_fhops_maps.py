@@ -59,6 +59,11 @@ def build_one(root: Path) -> int:
         )
         .reset_index()
     )
+    active_days = (
+        solution.groupby("block_id")["day"].nunique().to_dict()
+        if "day" in solution.columns
+        else {}
+    )
     wanted = set(grouped["block_num"].astype(int))
     blocks = gpd.read_file(geometry_path)
     blocks = blocks[blocks["block_id"].astype(int).isin(wanted)].copy()
@@ -91,11 +96,12 @@ def build_one(root: Path) -> int:
     if volume_path.is_file():
         frame = pd.read_csv(volume_path)
         if {"id", "work_required"}.issubset(frame.columns):
-            volume = {
-                str(row.id): float(row.work_required)
-                for row in frame.itertuples(index=False)
-            }
+            volume = {}
+            for row in frame.itertuples(index=False):
+                key = str(row.id)
+                volume[key] = volume.get(key, 0.0) + float(row.work_required)
     merged["volume_m3"] = merged["label"].map(volume)
+    merged["operating_days"] = merged["label"].map(active_days)
     merged = merged.to_crs("EPSG:4326")
     centroids = merged.geometry.to_crs(3005).centroid.to_crs(4326)
     merged["centroid_lon"] = centroids.x

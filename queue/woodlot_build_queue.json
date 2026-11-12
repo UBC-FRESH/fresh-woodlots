@@ -486,17 +486,129 @@
         "status": "built",
         "summary": {
           "aac_m3": 7311.0,
-          "completed_blocks": 4.0,
-          "elapsed_sec": 463.1,
+          "annual_processed_m3": 7311.0,
+          "annual_staged_m3": 0.0,
+          "annual_total_production_m3": 7311.0,
+          "blocks_treated": 4,
+          "completed_blocks": 0.0,
+          "elapsed_sec": 99.2,
           "horizon_days": 3650,
-          "makespan_day": 3604.0,
-          "makespan_years": 9.87,
-          "plan_kind": "tenyear",
-          "rate_m3_per_day": 40.616667,
+          "makespan_day": 3650,
+          "makespan_years": 10,
+          "plan_kind": "tactical_operational",
+          "rate_m3_per_day": 365.55,
           "schema_version": 1,
           "season_days": 180,
           "sequencing_violation_count": 0.0,
-          "total_production_m3": 73110.001,
+          "tactical_result": "fhops/tactical/out/result.json",
+          "total_production_m3": 73110.0,
+          "year_allocations": [
+            {
+              "blocks": [
+                "W0026-32",
+                "W0026-55"
+              ],
+              "harvested_m3": 7311.0,
+              "planned_m3": 7311.0,
+              "processed_m3": 7311.0,
+              "staged_m3": 0.0,
+              "year": 1
+            },
+            {
+              "blocks": [
+                "W0026-123"
+              ],
+              "harvested_m3": 7311.0,
+              "planned_m3": 7311.0,
+              "processed_m3": 7311.0,
+              "staged_m3": 0.0,
+              "year": 2
+            },
+            {
+              "blocks": [
+                "W0026-123"
+              ],
+              "harvested_m3": 7311.0,
+              "planned_m3": 7311.0,
+              "processed_m3": 7311.0,
+              "staged_m3": 0.0,
+              "year": 3
+            },
+            {
+              "blocks": [
+                "W0026-123"
+              ],
+              "harvested_m3": 7311.0,
+              "planned_m3": 7311.0,
+              "processed_m3": 7311.0,
+              "staged_m3": 0.0,
+              "year": 4
+            },
+            {
+              "blocks": [
+                "W0026-123"
+              ],
+              "harvested_m3": 7311.0,
+              "planned_m3": 7311.0,
+              "processed_m3": 7311.0,
+              "staged_m3": 0.0,
+              "year": 5
+            },
+            {
+              "blocks": [
+                "W0026-55"
+              ],
+              "harvested_m3": 7311.0,
+              "planned_m3": 7311.0,
+              "processed_m3": 7311.0,
+              "staged_m3": 0.0,
+              "year": 6
+            },
+            {
+              "blocks": [
+                "W0026-32"
+              ],
+              "harvested_m3": 7311.0,
+              "planned_m3": 7311.0,
+              "processed_m3": 7311.0,
+              "staged_m3": 0.0,
+              "year": 7
+            },
+            {
+              "blocks": [
+                "W0026-32",
+                "W0026-55",
+                "W0026-61",
+                "W0026-123"
+              ],
+              "harvested_m3": 7311.0,
+              "planned_m3": 7311.0,
+              "processed_m3": 7311.0,
+              "staged_m3": 0.0,
+              "year": 8
+            },
+            {
+              "blocks": [
+                "W0026-123"
+              ],
+              "harvested_m3": 7311.0,
+              "planned_m3": 7311.0,
+              "processed_m3": 7311.0,
+              "staged_m3": 0.0,
+              "year": 9
+            },
+            {
+              "blocks": [
+                "W0026-61",
+                "W0026-123"
+              ],
+              "harvested_m3": 7311.0,
+              "planned_m3": 7311.0,
+              "processed_m3": 7311.0,
+              "staged_m3": 0.0,
+              "year": 10
+            }
+          ],
           "years": 10
         }
       },
@@ -18090,17 +18202,125 @@
         "status": "built",
         "summary": {
           "aac_m3": 4000.0,
-          "completed_blocks": 2.0,
-          "elapsed_sec": 395.8,
+          "annual_processed_m3": 4000.0,
+          "annual_staged_m3": 0.0,
+          "annual_total_production_m3": 4000.0,
+          "blocks_treated": 2,
+          "completed_blocks": 0.0,
+          "elapsed_sec": 96.3,
           "horizon_days": 3650,
-          "makespan_day": 3604.0,
-          "makespan_years": 9.87,
-          "plan_kind": "tenyear",
-          "rate_m3_per_day": 22.222222,
+          "makespan_day": 3650,
+          "makespan_years": 10,
+          "plan_kind": "tactical_operational",
+          "rate_m3_per_day": 250.0,
           "schema_version": 1,
           "season_days": 180,
           "sequencing_violation_count": 0.0,
+          "tactical_result": "fhops/tactical/out/result.json",
           "total_production_m3": 40000.0,
+          "year_allocations": [
+            {
+              "blocks": [
+                "W1548-53"
+              ],
+              "harvested_m3": 4000.0,
+              "planned_m3": 4000.0,
+              "processed_m3": 4000.0,
+              "staged_m3": 0.0,
+              "year": 1
+            },
+            {
+              "blocks": [
+                "W1548-53"
+              ],
+              "harvested_m3": 4000.0,
+              "planned_m3": 4000.0,
+              "processed_m3": 4000.0,
+              "staged_m3": 0.0,
+              "year": 2
+            },
+            {
+              "blocks": [
+                "W1548-24"
+              ],
+              "harvested_m3": 4000.0,
+              "planned_m3": 4000.0,
+              "processed_m3": 4000.0,
+              "staged_m3": 0.0,
+              "year": 3
+            },
+            {
+              "blocks": [
+                "W1548-24"
+              ],
+              "harvested_m3": 4000.0,
+              "planned_m3": 4000.0,
+              "processed_m3": 4000.0,
+              "staged_m3": 0.0,
+              "year": 4
+            },
+            {
+              "blocks": [
+                "W1548-24"
+              ],
+              "harvested_m3": 4000.0,
+              "planned_m3": 4000.0,
+              "processed_m3": 4000.0,
+              "staged_m3": 0.0,
+              "year": 5
+            },
+            {
+              "blocks": [
+                "W1548-24",
+                "W1548-53"
+              ],
+              "harvested_m3": 4000.0,
+              "planned_m3": 4000.0,
+              "processed_m3": 4000.0,
+              "staged_m3": 0.0,
+              "year": 6
+            },
+            {
+              "blocks": [
+                "W1548-53"
+              ],
+              "harvested_m3": 4000.0,
+              "planned_m3": 4000.0,
+              "processed_m3": 4000.0,
+              "staged_m3": 0.0,
+              "year": 7
+            },
+            {
+              "blocks": [
+                "W1548-24"
+              ],
+              "harvested_m3": 4000.0,
+              "planned_m3": 4000.0,
+              "processed_m3": 4000.0,
+              "staged_m3": 0.0,
+              "year": 8
+            },
+            {
+              "blocks": [
+                "W1548-24"
+              ],
+              "harvested_m3": 4000.0,
+              "planned_m3": 4000.0,
+              "processed_m3": 4000.0,
+              "staged_m3": 0.0,
+              "year": 9
+            },
+            {
+              "blocks": [
+                "W1548-24"
+              ],
+              "harvested_m3": 4000.0,
+              "planned_m3": 4000.0,
+              "processed_m3": 4000.0,
+              "staged_m3": 0.0,
+              "year": 10
+            }
+          ],
           "years": 10
         }
       },
@@ -27519,17 +27739,134 @@
         "status": "built",
         "summary": {
           "aac_m3": 5833.0,
-          "completed_blocks": 10.0,
-          "elapsed_sec": 454.6,
+          "annual_processed_m3": 5833.0,
+          "annual_staged_m3": 0.0,
+          "annual_total_production_m3": 5833.0,
+          "blocks_treated": 10,
+          "completed_blocks": 0.0,
+          "elapsed_sec": 119.1,
           "horizon_days": 3650,
-          "makespan_day": 3613.0,
-          "makespan_years": 9.9,
-          "plan_kind": "tenyear",
-          "rate_m3_per_day": 32.405556,
+          "makespan_day": 3650,
+          "makespan_years": 10,
+          "plan_kind": "tactical_operational",
+          "rate_m3_per_day": 291.65,
           "schema_version": 1,
           "season_days": 180,
           "sequencing_violation_count": 0.0,
-          "total_production_m3": 58329.997,
+          "tactical_result": "fhops/tactical/out/result.json",
+          "total_production_m3": 58330.0,
+          "year_allocations": [
+            {
+              "blocks": [
+                "W2023-50"
+              ],
+              "harvested_m3": 5833.0,
+              "planned_m3": 5833.0,
+              "processed_m3": 5833.0,
+              "staged_m3": 0.0,
+              "year": 1
+            },
+            {
+              "blocks": [
+                "W2023-50",
+                "W2023-57"
+              ],
+              "harvested_m3": 5833.0,
+              "planned_m3": 5833.0,
+              "processed_m3": 5833.0,
+              "staged_m3": 0.0,
+              "year": 2
+            },
+            {
+              "blocks": [
+                "W2023-30",
+                "W2023-94"
+              ],
+              "harvested_m3": 5833.0,
+              "planned_m3": 5833.0,
+              "processed_m3": 5833.0,
+              "staged_m3": 0.0,
+              "year": 3
+            },
+            {
+              "blocks": [
+                "W2023-8",
+                "W2023-28",
+                "W2023-32"
+              ],
+              "harvested_m3": 5833.0,
+              "planned_m3": 5833.0,
+              "processed_m3": 5833.0,
+              "staged_m3": 0.0,
+              "year": 4
+            },
+            {
+              "blocks": [
+                "W2023-8"
+              ],
+              "harvested_m3": 5833.0,
+              "planned_m3": 5833.0,
+              "processed_m3": 5833.0,
+              "staged_m3": 0.0,
+              "year": 5
+            },
+            {
+              "blocks": [
+                "W2023-8",
+                "W2023-30",
+                "W2023-40",
+                "W2023-51",
+                "W2023-94"
+              ],
+              "harvested_m3": 5833.0,
+              "planned_m3": 5833.0,
+              "processed_m3": 5833.0,
+              "staged_m3": 0.0,
+              "year": 6
+            },
+            {
+              "blocks": [
+                "W2023-57"
+              ],
+              "harvested_m3": 5833.0,
+              "planned_m3": 5833.0,
+              "processed_m3": 5833.0,
+              "staged_m3": 0.0,
+              "year": 7
+            },
+            {
+              "blocks": [
+                "W2023-50",
+                "W2023-51"
+              ],
+              "harvested_m3": 5833.0,
+              "planned_m3": 5833.0,
+              "processed_m3": 5833.0,
+              "staged_m3": 0.0,
+              "year": 8
+            },
+            {
+              "blocks": [
+                "W2023-51",
+                "W2023-83"
+              ],
+              "harvested_m3": 5833.0,
+              "planned_m3": 5833.0,
+              "processed_m3": 5833.0,
+              "staged_m3": 0.0,
+              "year": 9
+            },
+            {
+              "blocks": [
+                "W2023-30"
+              ],
+              "harvested_m3": 5833.0,
+              "planned_m3": 5833.0,
+              "processed_m3": 5833.0,
+              "staged_m3": 0.0,
+              "year": 10
+            }
+          ],
           "years": 10
         }
       },

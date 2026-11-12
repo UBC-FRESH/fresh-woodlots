@@ -13,6 +13,7 @@ Tag: `v0.9.0-rc2`
 | Built WS4 instances | **798 / 798** |
 | FHOPS summaries | **798 / 798** |
 | FHOPS maps, timelines, theatre data | **798 / 798** |
+| Featured ten-year tactical–operational plans | **3 / 3** |
 | W4W v1 calibrations | **798 / 798** |
 | Portal population QA | **0 failures** |
 | Tree Lab demo cases | **3 / 3** |

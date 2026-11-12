@@ -131,12 +131,13 @@ def _fhops_page(instance: Any) -> str:
             ("Horizon", f"{_fmt(summary.get('horizon_days'))} days"),
             ("Average scheduled rate", f"{_fmt(average_rate)} m³/day"),
         ]
-    elif plan_kind in ("rolling10", "multiyear"):
-        plan_label = (
-            "10 years · multi-year"
-            if plan_kind == "multiyear"
-            else "10 years · rolling"
-        )
+    elif plan_kind in ("rolling10", "multiyear", "tactical_operational"):
+        if plan_kind == "tactical_operational":
+            plan_label = "10 years · tactical–operational MILP"
+        elif plan_kind == "multiyear":
+            plan_label = "10 years · multi-year"
+        else:
+            plan_label = "10 years · rolling"
         stats = [
             ("Annual AAC", f"{_fmt(instance.aac_m3)} m³/yr"),
             (
@@ -208,6 +209,14 @@ def _fhops_page(instance: Any) -> str:
             "season. This is not a global ten-year MILP or a production "
             "schedule.</p>"
         )
+    elif plan_kind == "tactical_operational":
+        plan_hint = (
+            "<p class='hint'>Ten-year tactical–operational MILP: aggregate "
+            "block/area/product commitments are solved first, then compiled "
+            "into ten annual operational seasons. The tactical layer enforces "
+            "block area limits and annual product demand; the operational "
+            "layer turns those commitments into machine-day schedules.</p>"
+        )
     elif plan_kind == "rolling10":
         plan_hint = (
             "<p class='hint'>Ten-year rolling plan: each year is an optimized "
@@ -223,7 +232,9 @@ def _fhops_page(instance: Any) -> str:
             "operating horizon; it is not annual production and not a "
             "production operating plan.</p>"
         )
-    if plan_kind == "tenyear":
+    if plan_kind == "tactical_operational":
+        kicker = "ten-year tactical-operational plan"
+    elif plan_kind == "tenyear":
         kicker = "ten-year seasonal plan"
     elif plan_kind in ("rolling10", "multiyear"):
         kicker = "ten-year multi-year plan"
@@ -232,8 +243,8 @@ def _fhops_page(instance: Any) -> str:
     if scheduled.is_file():
         map_html = (
             '<div id="fhops-map"></div>'
-            '<p class="map-note">Orange blocks are the first-period FHOPS '
-            "schedule. Click a block for its machines and working days.</p>"
+            '<p class="map-note">Orange blocks are the scheduled FHOPS '
+            "blocks. Click a block for its machines and working days.</p>"
         )
         map_script = FHOPS_JS.replace("__SLUG__", slug)
     else:

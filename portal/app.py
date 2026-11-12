@@ -367,8 +367,9 @@ SOURCES_HTML = """<!doctype html>
   <h1>Sources &amp; methods</h1>
   <p class="lede">Every woodlot licence instance in this portal is built
   from public data. The chain is reproducible: catalog, AOI, VRI clip, THLB
-  split, FEMIC curves, WS4 compile, AAC search, and a first-period FHOPS
-  operational pilot.</p>
+  split, FEMIC curves, WS4 compile, AAC search, and a FHOPS operational
+  pilot. The three featured pilots add a formal ten-year
+  tactical–operational MILP.</p>
 
   <h2>Data sources</h2>
   <table>
@@ -406,7 +407,8 @@ SOURCES_HTML = """<!doctype html>
     <li>Build VDYP curves and fresh-tipsy managed curves through FEMIC.</li>
     <li>Compile the fragments into a WS4 dataset and validate it.</li>
     <li>Run a 1.2× AAC even-flow search for the first 100 years.</li>
-    <li>Generate and solve a first-period FHOPS operational pilot.</li>
+    <li>Generate and solve a FHOPS operational pilot; for the featured
+      pilots, solve the ten-year tactical–operational MILP first.</li>
   </ol>
 
   <h2>Caveats</h2>
@@ -416,8 +418,10 @@ SOURCES_HTML = """<!doctype html>
       surrogate (for example MB→AT, BL→AT, SE→SW, PY→PLI, H→HWI).</li>
     <li>VDYP still runs the Windows console under Wine; the managed-curve
       stage uses fresh-tipsy without Wine.</li>
-    <li>The FHOPS plans are first-period, ground-based, rate-fixed pilots.
-      They do not model roads, terrain, landing geometry, or real costs.</li>
+    <li>The non-featured FHOPS plans are first-period, ground-based,
+      rate-fixed pilots. The featured W0026/W2023/W1548 plans use the
+      tactical–operational MILP plus annual operational seasons. None model
+      road-building, silviculture, landing geometry, or full real costs.</li>
     <li>Some woodlots cannot hold their AAC at the 1.2× band through all ten
       periods; that gap is a model result, not a build failure.</li>
     <li>This is not a statutory timber supply analysis. Use professional
@@ -667,10 +671,22 @@ def _card(instance: Instance) -> str:
     blocks = f"{instance.blocks:,}" if instance.blocks is not None else "—"
     runs = ", ".join(instance.runs) if instance.runs else "none"
     if instance.fhops:
-        fhops = (
-            f"{instance.fhops.get('completed_blocks', '?')} blocks, "
-            f"{instance.fhops.get('makespan_day', '?')} days"
-        )
+        plan_kind = instance.fhops.get("plan_kind")
+        if plan_kind in (
+            "rolling10",
+            "multiyear",
+            "tactical_operational",
+            "tenyear",
+        ):
+            treated = instance.fhops.get("blocks_treated") or instance.fhops.get(
+                "completed_blocks", "?"
+            )
+            fhops = f"{treated} blocks treated, 10 years"
+        else:
+            fhops = (
+                f"{instance.fhops.get('completed_blocks', '?')} blocks, "
+                f"{instance.fhops.get('makespan_day', '?')} days"
+            )
     else:
         fhops = "not run"
     w4w_text = ""
@@ -936,10 +952,10 @@ async def landing() -> HTMLResponse:
     <p class="kicker">UBC FRESH · public-data pilot</p>
     <h1>Woodlots BC Planning Portal</h1>
     <p class="lede">All {total} active woodlot licences, each with a WS4
-    strategic model and a first-period FHOPS operational pilot, built only
-    from public data. Models built: {ready}. Licences catalogued with AAC
-    pending: {pending_aac}. The three featured pilots are Chinook Woodlots,
-    Boomer Enterprises, and Fibre Farms.</p>
+    strategic model and a FHOPS operational pilot, built only from public
+    data. Models built: {ready}. Licences catalogued with AAC pending:
+    {pending_aac}. The featured Chinook, Boomer, and Fibre Farms pilots also
+    have a formal ten-year tactical–operational plan.</p>
     <div class="hero-actions">
       <a class="open" href="/fhops/wl-w0026">Open W0026 10-year plan</a>
       {tree_lab_action}

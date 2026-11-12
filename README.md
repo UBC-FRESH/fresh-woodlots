@@ -64,6 +64,10 @@ The three featured pilots also have Tree Lab cases at `/treelab/`:
 | W1548 Fibre Farms | `w1548-24` | `/treelab/?case=w1548-24&run=demo-1` |
 | W2023 Boomer Enterprises | `w2023-94` | `/treelab/?case=w2023-94&run=demo-1` |
 
+The three featured pilots also use the formal FHOPS tactical–operational MILP
+plus ten annual operational seasons. The remaining woodlots retain first-period
+rate-fixed pilots until the tactical layer is run for them.
+
 The tree lists are synthetic samples inside real FHOPS block polygons; the
 machine choreography is illustrative. See `docs/TREELAB.md`.
 

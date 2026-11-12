@@ -14,17 +14,18 @@ Shows:
 
 - annual AAC;
 - **10-year period volume**;
-- completed blocks;
+- completed blocks / blocks treated;
 - makespan;
-- average scheduled rate;
+- average scheduled rate or annual harvested/processed/staged;
 - configured rate;
 - horizon;
 - sequencing violations;
 - solved-block map;
 - model file downloads.
 
-The period volume is `annual AAC × 10`, compressed into the FHOPS operating
-horizon. It is not annual production and not a production operating plan.
+Non-featured woodlots remain first-period, rate-fixed pilots. The three
+featured pilots now use the tactical–operational MILP and annual operational
+seasons described below.
 
 ## 3D harvest studio
 
@@ -76,26 +77,33 @@ fhops/out/theatre.json
 
 `scripts/batch_fhops.py` runs both builders after a FHOPS batch solve.
 
-## Ten-year seasonal plans
+## Ten-year tactical–operational plans
 
-The three featured pilots have ten-year seasonal plans:
+The three featured pilots now use the formal FHOPS tactical–operational MILP:
 
-| Woodlot | Volume | Blocks | Makespan |
-| --- | ---: | ---: | ---: |
-| W0026 | 73,110 m³ | 4 | 9.87 years |
-| W1548 | 40,000 m³ | 2 | 9.87 years |
-| W2023 | 58,330 m³ | 10 | 9.90 years |
+| Woodlot | Annual AAC | 10-year volume | Blocks treated | Horizon |
+| --- | ---: | ---: | ---: | ---: |
+| W0026 | 7,311 m³ | 73,110 m³ | 4 | 10 years |
+| W1548 | 4,000 m³ | 40,000 m³ | 2 | 10 years |
+| W2023 | 5,833 m³ | 58,330 m³ | 10 | 10 years |
 
-Each plan uses a 3,650-day horizon with a 180-day operating season per year.
-It is a compressed tactical pilot, not a global ten-year MILP or a production
-schedule.
+The tactical layer selects block areas and annual product volumes from the
+real selected WS4 blocks. Each year is then compiled into an independent
+180-day operational FHOPS season, which supplies the machine-day schedule,
+block map, and 3D replay. Product yields use a transparent 70/30
+sawlog/pulp split.
 
 Rebuild:
 
 ```bash
-python scripts/build_fhops_tenyear.py --only wl-w0026 --iterations 800
-python scripts/build_fhops_tenyear.py --only wl-w1548 --iterations 800
-python scripts/build_fhops_tenyear.py --only wl-w2023 --iterations 800
+python scripts/build_tactical_plan.py \
+  --only wl-w0026 --only wl-w1548 --only wl-w2023
+python scripts/build_fhops_tactical_ops.py \
+  --only wl-w0026 --only wl-w1548 --only wl-w2023
+python scripts/prepare_fhops_maps.py \
+  --only wl-w0026 --only wl-w1548 --only wl-w2023
+python scripts/prepare_theatre.py \
+  --only wl-w0026 --only wl-w1548 --only wl-w2023
 ```
 
 ## Pareto sweeps
@@ -124,12 +132,14 @@ python scripts/build_pareto_sweep.py --only wl-w0026 \
 ## Coverage
 
 All **798** built instances have FHOPS summaries, maps, and theatre data. The
-three featured pilots also have ten-year seasonal plans, Pareto sweeps, and
-Tree Lab cases.
+three featured pilots also have ten-year tactical–operational plans, Pareto
+sweeps, and Tree Lab cases.
 
 ## Caveats
 
-- The studio compresses ten years of AAC volume into a short horizon.
+- The non-featured studio pilots compress AAC volume into a short horizon.
+- The featured studios show the tactical MILP plus ten annual operational
+  seasons; the operational layer is not a production schedule.
 - Machine movement is a straight-line marker between block centroids, not a road
   route.
 - The theatre trees and choreography are explicitly illustrative.

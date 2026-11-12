@@ -176,8 +176,12 @@ function fitYear(force = false) {
     (feature) => labels.has(feature.properties.label)
   );
   if (!targets.length) return;
-  map.fitBounds(blockBounds({ features: targets }), {
-    padding: 110, pitch: 58, bearing: -24, duration: 900, maxZoom: 14,
+  const active = (eventsByDay.get(day) || [])[0];
+  const focus = targets.find(
+    (feature) => feature.properties.label === active?.block
+  ) || targets[0];
+  map.fitBounds(blockBounds({ features: [focus] }), {
+    padding: 120, pitch: 60, bearing: -24, duration: 900, maxZoom: 15,
   });
 }
 
@@ -472,8 +476,9 @@ function init(data) {
       .setLngLat(event.lngLat)
       .setHTML('<strong>' + (p.label || p.block_id) + '</strong><br>' +
         'Volume: ' + Math.round(Number(p.volume_m3) || 0).toLocaleString() +
-        ' m³<br>Days: ' + p.first_day + '–' + p.last_day + '<br>' +
-        'Machines: ' + (p.machines || '—'))
+        ' m³<br>Operating days: ' + (p.operating_days ?? '—') +
+        '<br>Calendar window: days ' + p.first_day + '–' + p.last_day +
+        '<br>Machines: ' + (p.machines || '—'))
       .addTo(map);
   });
   map.on('mouseenter', 'blocks-active', () => {
@@ -535,15 +540,28 @@ def render_studio(
     horizon = summary.get("horizon_days") or 0
     volume = summary.get("total_production_m3") or 0
     plan_kind = summary.get("plan_kind")
-    if plan_kind in ("rolling10", "multiyear"):
-        plan_text = f"ten-year multi-year plan · {horizon:,.0f}-day horizon"
+    if plan_kind in ("rolling10", "multiyear", "tactical_operational"):
+        if plan_kind == "tactical_operational":
+            plan_text = (
+                f"ten-year tactical–operational MILP · "
+                f"{horizon:,.0f}-day horizon"
+            )
+            note = (
+                "Prototype animation of a ten-year tactical–operational FHOPS "
+                "plan. The tactical MILP selects block areas and annual product "
+                "volumes; ten annual operational seasons then schedule the "
+                "machine days. It is not a production schedule. Drag to orbit, "
+                "scroll to zoom."
+            )
+        else:
+            plan_text = f"ten-year multi-year plan · {horizon:,.0f}-day horizon"
+            note = (
+                "Prototype animation of a ten-year multi-year FHOPS plan. Each "
+                "year is an optimized 180-day annual season; the active blocks "
+                "change by year. It is not a production schedule. Drag to orbit, "
+                "scroll to zoom."
+            )
         volume_label = "10-year harvested"
-        note = (
-            "Prototype animation of a ten-year multi-year FHOPS plan. Each "
-            "year is an optimized 180-day annual season; the active blocks "
-            "change by year. It is not a production schedule. Drag to orbit, "
-            "scroll to zoom."
-        )
     else:
         plan_text = f"first-period pilot, compressed into a {horizon:,.0f}-day horizon"
         volume_label = "10-year period volume"

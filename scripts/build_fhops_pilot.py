@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 import math
 from pathlib import Path
 
@@ -55,10 +56,21 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--name", default=None, help="Scenario name override")
     parser.add_argument(
+        "--block-ids",
+        default=None,
+        help="Comma-separated WS4 block IDs to include",
+    )
+    parser.add_argument(
         "--target-volume",
         type=float,
         default=None,
         help="Override the target volume; default AAC x period",
+    )
+    parser.add_argument(
+        "--volume-map",
+        type=Path,
+        default=None,
+        help="Optional JSON mapping numeric WS4 block ID to exact work volume (m3)",
     )
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args(argv)
@@ -78,6 +90,13 @@ def main(argv: list[str] | None = None) -> int:
     )
     first = schedule[schedule["offset"] < args.period].copy()
     first = first.drop_duplicates(subset=["block_id"], keep="first")
+    if args.block_ids:
+        wanted = {
+            int(item)
+            for item in args.block_ids.split(",")
+            if item.strip()
+        }
+        first = first[first["block_id"].astype(int).isin(wanted)]
     if first.empty:
         # Some woodlots have no harvest scheduled in the first 10 years.
         # Use the first 10-year window that contains blocks instead.
@@ -98,9 +117,16 @@ def main(argv: list[str] | None = None) -> int:
     ]
     total_area = sum(area for _block, area in selected)
     target_volume = args.target_volume or args.aac * args.period
+    volume_map: dict[str, float] = {}
+    if args.volume_map:
+        payload = json.loads(args.volume_map.read_text(encoding="utf-8"))
+        volume_map = {str(key): float(value) for key, value in payload.items()}
     block_rows: list[dict[str, object]] = []
     for block_id, area in selected:
-        volume = round(target_volume * area / total_area, 3)
+        if str(block_id) in volume_map:
+            volume = round(volume_map[str(block_id)], 3)
+        else:
+            volume = round(target_volume * area / total_area, 3)
         block_rows.append(
             {
                 "id": f"{prefix}-{block_id}",

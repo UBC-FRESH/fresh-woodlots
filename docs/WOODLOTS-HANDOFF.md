@@ -33,8 +33,11 @@ Open `http://127.0.0.1:8795/`.
    Switch scenarios, show the target matrix, penalty ledger, and chart.
 5. **Solve.** The Solve panel is enabled in demo mode. Use a short run if
    demonstrating; do not leave a long run unattended.
-6. **FHOPS.** On the card/page, show the first-period ground-based operational
-   pilot summary.
+6. **FHOPS.** On the card/page, show the featured ten-year
+   tactical–operational plan: annual harvested, processed, staged, blocks
+   treated, and ten-year totals. Open the 3D studio, choose Year 1–10, and
+   play the day-by-day block schedule. The other woodlots remain first-period
+   ground-based pilots.
 7. **Sources & methods.** `/about` documents the public data, model chain,
    surrogates, Wine exception, and caveats. `/terms` and `/privacy` are linked
    in the footer.
@@ -50,8 +53,12 @@ Open `http://127.0.0.1:8795/`.
   harvest on the managed area will therefore look higher than the licence-wide
   AAC MAI. That is a land-base effect, not a yield-curve error.
 - The portal is a planning prototype, not a statutory AAC determination.
+- The three featured pilots use the FHOPS tactical–operational MILP plus ten
+  annual operational seasons. The tactical layer selects block areas and
+  annual product volumes; the operational layer schedules machine days.
 - The same chain that built the 62 community forests scales to the woodlot
-  sector; the remaining work is batch compute and public hosting.
+  sector; the remaining work is broader tactical coverage, validation, and
+  public hosting.
 
 ## If a model does not load
 
