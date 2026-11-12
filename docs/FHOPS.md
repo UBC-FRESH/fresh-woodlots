@@ -47,6 +47,18 @@ horizon. It is not annual production and not a production operating plan.
 The tree layout is illustrative, not an inventory, and the machine choreography
 is not a FHOPS solve.
 
+## Tree Lab
+
+`/treelab/` mounts the experimental FHOPS Tree Lab sandbox. The three featured
+pilots have precomputed cases:
+
+- `w0026-61` — W0026 Chinook Woodlots
+- `w1548-24` — W1548 Fibre Farms
+- `w2023-94` — W2023 Boomer Enterprises
+
+The FHOPS page links directly to the matching run. See
+[TREELAB.md](TREELAB.md) for the case layout, rebuild commands, and caveats.
+
 ## Generated data
 
 `scripts/prepare_fhops_maps.py` writes:
@@ -64,34 +76,45 @@ fhops/out/theatre.json
 
 `scripts/batch_fhops.py` runs both builders after a FHOPS batch solve.
 
-## Ten-year seasonal plan
+## Ten-year seasonal plans
 
-W0026 has a ten-year seasonal plan:
+The three featured pilots have ten-year seasonal plans:
 
-- horizon: 3,650 days;
-- operating season: 180 days/year;
-- solved volume: 73,110 m³ (ten years of AAC);
-- completed blocks: 4;
-- makespan: 9.87 years;
-- the original compressed 450-day plan is backed up as
-  `fhops_compressed_450d`.
+| Woodlot | Volume | Blocks | Makespan |
+| --- | ---: | ---: | ---: |
+| W0026 | 73,110 m³ | 4 | 9.87 years |
+| W1548 | 40,000 m³ | 2 | 9.87 years |
+| W2023 | 58,330 m³ | 10 | 9.90 years |
+
+Each plan uses a 3,650-day horizon with a 180-day operating season per year.
+It is a compressed tactical pilot, not a global ten-year MILP or a production
+schedule.
 
 Rebuild:
 
 ```bash
 python scripts/build_fhops_tenyear.py --only wl-w0026 --iterations 800
+python scripts/build_fhops_tenyear.py --only wl-w1548 --iterations 800
+python scripts/build_fhops_tenyear.py --only wl-w2023 --iterations 800
 ```
 
-## Pareto sweep
+## Pareto sweeps
 
-W0026 also has a small AAC-band Pareto portfolio:
+The featured pilots also have small AAC-band Pareto portfolios:
 
 ```text
-ws4/runs/pareto_sweep/portfolio.json
+instances/<slug>/ws4/runs/pareto_sweep/portfolio.json
 ```
 
-Three target levels (0.85×, 1.0×, 1.15× AAC) produce three front members. The
-WS4 **Pareto** tab loads the portfolio and shows the front.
+The sweeps use 0.85×, 1.0×, and 1.15× AAC. Current fronts:
+
+| Woodlot | Front members |
+| --- | ---: |
+| W0026 | 3 |
+| W1548 | 2 |
+| W2023 | 1 |
+
+The WS4 **Pareto** tab loads the portfolio and shows the front.
 
 ```bash
 python scripts/build_pareto_sweep.py --only wl-w0026 \
@@ -100,10 +123,9 @@ python scripts/build_pareto_sweep.py --only wl-w0026 \
 
 ## Coverage
 
-At the time this page was written, **323 built instances** had FHOPS pages and
-studios/theatre data. The remaining built/in-flight instances get theirs in the
-post-batch FHOPS pass. W0026 has the ten-year and Pareto demo surfaces; W1548
-and W2023 can be added the same way after their FHOPS summaries exist.
+All **798** built instances have FHOPS summaries, maps, and theatre data. The
+three featured pilots also have ten-year seasonal plans, Pareto sweeps, and
+Tree Lab cases.
 
 ## Caveats
 

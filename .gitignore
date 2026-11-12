@@ -45,5 +45,9 @@ portal/portal.log
 batch/logs/
 batch/repair/
 
+# Tree Lab generated runs and candidate cases
+treelab_runs/
+treelab_cases/_candidates/
+
 # Sphinx build output
 docs/_build/

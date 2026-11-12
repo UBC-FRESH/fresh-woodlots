@@ -9,7 +9,7 @@ Type=simple
 User=gep
 Group=gep
 WorkingDirectory=/srv/shared-data/gep/ws4/fresh-woodlots
-Environment=PYTHONPATH=/srv/shared-data/gep/ws4/ws4-public-demo:/srv/shared-data/gep/ws4/fresh-woodlots
+Environment=PYTHONPATH=/srv/shared-data/gep/ws4/ws4-public-demo:/srv/shared-data/gep/ws4/fresh-woodlots:/srv/shared-data/gep/ws4/fhops-ground-support:/srv/shared-data/gep/ws4/fhops-ground-support/src
 Environment=PYTHONDONTWRITEBYTECODE=1
 Environment=PUBLIC_READ_ONLY=0
 Environment=DEMO_MODE=1

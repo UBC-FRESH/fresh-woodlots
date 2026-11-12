@@ -34,6 +34,7 @@ UI.
 
    W4W-WINE
    FHOPS
+   TREELAB
    api
 
 .. toctree::

@@ -3,9 +3,16 @@
 from __future__ import annotations
 
 import html
+from pathlib import Path
 from typing import Any
 
 TREELAB_MOUNTED = False
+ROOT = Path(__file__).resolve().parents[1]
+TREELAB_CASES = {
+    "wl-w0026": "w0026-61",
+    "wl-w1548": "w1548-24",
+    "wl-w2023": "w2023-94",
+}
 
 FHOPS_CSS = """<style>
   :root { color-scheme: light; --ink: #17231f; --muted: #5b6b64;
@@ -173,12 +180,15 @@ def _fhops_page(instance: Any) -> str:
         for name in FHOPS_DOWNLOADS
     )
     tree_lab_link = ""
-    if TREELAB_MOUNTED:
-        tree_lab_href = "/treelab/"
-        if instance.slug == "cfa-k3x":
-            tree_lab_href = "/treelab/?case=k3x-6683&run=demo-1"
+    case_id = TREELAB_CASES.get(instance.slug)
+    if TREELAB_MOUNTED and case_id:
+        run_id = "demo-1"
+        has_run = (
+            ROOT / "treelab_runs" / case_id / run_id / "run.json"
+        ).is_file()
+        query = f"?case={case_id}" + (f"&run={run_id}" if has_run else "")
         tree_lab_link = (
-            f'<a class="button secondary" href="{tree_lab_href}">'
+            f'<a class="button secondary" href="/treelab/{query}">'
             "Open Tree Lab 3D/replay</a>"
         )
     horizon_label = html.escape(str(summary.get("horizon_days") or 450))

@@ -1,0 +1,25 @@
+{
+  "schema_version": "fhops.tree.inventory.v1",
+  "inventory_id": "w0026-61-synthetic",
+  "generated_utc": "2026-11-12T01:15:58.826578+00:00",
+  "source_id": "synthetic-w0026-61",
+  "producer": "Woodlots BC demo tree-scale sample",
+  "method": "Synthetic visual tree layout from the FHOPS block geometry.",
+  "crs": "EPSG:3005",
+  "units": {
+    "x_y": "m",
+    "elevation": "m",
+    "dbh": "cm",
+    "height": "m",
+    "crown_radius": "m"
+  },
+  "review_status": "not_reviewed",
+  "block_ids": [
+    "W0026-61"
+  ],
+  "tree_count": 648,
+  "caveats": [
+    "Synthetic tree list; not a surveyed stand or ITD/ITC product.",
+    "Machine choreography is illustrative, not a production plan."
+  ]
+}

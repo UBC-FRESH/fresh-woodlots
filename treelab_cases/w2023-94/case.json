@@ -1,0 +1,60 @@
+{
+  "schema_version": "fhops.tree_lab.case.v1",
+  "case_id": "w2023-94",
+  "label": "W2023-94 \u2014 tree-scale machine theatre",
+  "block_id": "W2023-94",
+  "landing_id": "L1",
+  "scenario": "scenario/scenario.yaml",
+  "inventory": "tree_inventory/tree_inventory.csv",
+  "metadata": "tree_inventory/tree_inventory.meta.json",
+  "system_args": {
+    "feller": "H1",
+    "skidders": [
+      "H2"
+    ],
+    "processors": [
+      "H3"
+    ],
+    "loader": "H4",
+    "bunch_volume_m3": 8.0,
+    "rate_model": "calibrated",
+    "shift_days": 5,
+    "shifts_per_day": 1,
+    "hours_per_shift": 10,
+    "truck_capacity_m3": 30.0,
+    "truck_count": 2,
+    "truck_cycle_s": 3600.0,
+    "landing_capacity_m3": 160.0,
+    "skidder_capacity_m3": 40.0
+  },
+  "terrain": {
+    "dem": null,
+    "road": null
+  },
+  "stand": {
+    "area_ha": 3.41,
+    "tree_count": 187,
+    "centre_wgs84": [
+      50.195206,
+      -118.739071
+    ],
+    "crs": "EPSG:3005"
+  },
+  "provenance": {
+    "tree_list": "synthetic visual sample",
+    "stand_footprint": "real FHOPS block polygon",
+    "machine_choreography": "illustrative",
+    "review_status": "not_reviewed"
+  },
+  "caveats": [
+    "Synthetic tree list inside a real FHOPS block polygon.",
+    "Tree-scale machine choreography is illustrative.",
+    "Not an operational, financial, or regulatory plan.",
+    "No ALS/LiDAR terrain or step map is included."
+  ],
+  "harvest": {
+    "type": "clear_cut",
+    "marking_rule": "all",
+    "target_basal_area_fraction": 1.0
+  }
+}

@@ -20,6 +20,7 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from markdown_it import MarkdownIt
 from ws4.web.app import create_app
 
+from . import fhops_page as fhops_page_module
 from .fhops_page import _fhops_page
 from .fhops_studio import render_studio
 from .fhops_theatre import render_theatre
@@ -285,6 +286,31 @@ def discover() -> list[Instance]:
 
 
 app = FastAPI(title="Woodlots BC Planning Portal")
+
+TREELAB_MOUNTED = False
+try:
+    from sandbox.tree_lab.app import ServiceConfig as TreeLabConfig
+    from sandbox.tree_lab.app import create_app as create_treelab
+
+    _tree_cases = ROOT / "treelab_cases"
+    _tree_runs = ROOT / "treelab_runs"
+    _tree_cases.mkdir(parents=True, exist_ok=True)
+    _tree_runs.mkdir(parents=True, exist_ok=True)
+    app.mount(
+        "/treelab",
+        create_treelab(
+            TreeLabConfig(
+                cases_root=_tree_cases,
+                runs_root=_tree_runs,
+                workspace=ROOT,
+                allow_agent=False,
+            )
+        ),
+    )
+    TREELAB_MOUNTED = True
+    fhops_page_module.TREELAB_MOUNTED = True
+except Exception as error:  # optional Tree Lab package
+    print(f"Tree Lab not mounted: {error}")
 
 SOURCES_HTML = """<!doctype html>
 <html lang="en">
