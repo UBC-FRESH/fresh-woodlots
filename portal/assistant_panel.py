@@ -61,12 +61,36 @@ ASSISTANT_CSS = """<style>
     margin: 0; padding: 0 .8rem .65rem; color: var(--muted);
     font-size: .7rem; background: #fff;
   }
+  .assistant-msg.markdown p { margin: .25rem 0; }
+  .assistant-msg.markdown ul,
+  .assistant-msg.markdown ol { margin: .3rem 0; padding-left: 1.2rem; }
+  .assistant-msg.markdown h1,
+  .assistant-msg.markdown h2,
+  .assistant-msg.markdown h3 { margin: .45rem 0 .2rem; line-height: 1.2; }
+  .assistant-msg.markdown h1 { font-size: 1.05rem; }
+  .assistant-msg.markdown h2 { font-size: .98rem; }
+  .assistant-msg.markdown h3 { font-size: .9rem; }
+  .assistant-msg.markdown pre {
+    margin: .35rem 0; padding: .5rem; overflow: auto;
+    background: #f1f5f2; border-radius: 7px; font-size: .75rem;
+  }
+  .assistant-msg.markdown code {
+    background: #eef4ef; border-radius: 3px; padding: .05rem .2rem;
+    font-size: .78rem;
+  }
+  .assistant-msg.markdown pre code { padding: 0; background: none; }
+  .assistant-msg.markdown a { color: var(--accent); }
+  .assistant-msg.markdown table { border-collapse: collapse; font-size: .75rem; }
+  .assistant-msg.markdown th,
+  .assistant-msg.markdown td { border: 1px solid var(--line); padding: .2rem .3rem; }
   @media (max-width: 600px) {
     .portal-assistant { right: .5rem; bottom: .5rem; width: calc(100vw - 1rem); }
   }
 </style>"""
 
-ASSISTANT_HTML = """<aside id="portal-assistant" class="portal-assistant" hidden
+ASSISTANT_HTML = """<script src="https://cdn.jsdelivr.net/npm/marked@15.0.7/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"></script>
+<aside id="portal-assistant" class="portal-assistant" hidden
        aria-label="Portal assistant">
   <div class="assistant-head">
     <strong>✦ Ask</strong>
@@ -103,7 +127,19 @@ ASSISTANT_JS = f"""<script>
   function addMessage(kind, text) {{
     const row = document.createElement('div');
     row.className = 'assistant-msg ' + kind;
-    row.textContent = text;
+    if (
+      kind === 'agent'
+      && window.marked
+      && window.DOMPurify
+      && typeof window.marked.parse === 'function'
+    ) {{
+      row.classList.add('markdown');
+      row.innerHTML = window.DOMPurify.sanitize(
+        window.marked.parse(text, {{ breaks: true, gfm: true }})
+      );
+    }} else {{
+      row.textContent = text;
+    }}
     log.appendChild(row);
     log.scrollTop = log.scrollHeight;
     return row;
