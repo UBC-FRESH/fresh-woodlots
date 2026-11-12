@@ -54,8 +54,8 @@ The first-period pilots compress ten years of AAC into a short horizon. A
 population audit compares the period volume with the selected scheduled block
 area:
 
-- **71** instances are above 1,000 m³ per selected hectare;
-- **5** are above 5,000 m³/ha;
+- **70** instances are above 1,000 m³ per selected hectare;
+- **0** are above 5,000 m³/ha;
 - no instance has a missing selected area.
 
 Those cases are labeled **⚠ area check** in the portal. The label is a
@@ -76,9 +76,17 @@ selected area: 686.8 ha
 volume / selected ha: 53.9 m³/ha
 ```
 
-The **area check** warning cleared, and the page now shows a plausible
-first-period footprint. This is the proof case for rebuilding other flagged
-pilots; it does not change their summaries yet.
+The **area check** warning cleared. The five extreme cases were then rebuilt with the same all-block approach:
+
+| Licence | Completed blocks | Selected area | Volume / ha |
+|---|---:|---:|---:|
+| W0307 | 48 | 470.1 ha | 40.4 |
+| W1591 | 56 | 445.8 ha | 63.4 |
+| W1601 | 54 | 153.4 ha | 86.8 |
+| W1612 | 34 | 473.0 ha | 57.8 |
+| W2027 | 60 | 955.2 ha | 20.0 |
+
+All five now pass the area audit and keep zero sequencing violations.
 
 ## Tree Lab
 

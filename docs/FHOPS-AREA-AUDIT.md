@@ -3,10 +3,10 @@
 The first-period FHOPS pilots compress ten years of AAC into a short horizon. Volume per selected scheduled hectare is a screening check, not a yield-table validation.
 
 - Instances audited: **798**
-- Median volume / selected ha: **450.1 m³/ha**
-- 90th percentile: **980.9 m³/ha**
+- Median volume / selected ha: **447.9 m³/ha**
+- 90th percentile: **968.4 m³/ha**
 - Check (> 1,000 m³/ha): **70**
-- Extreme (> 5,000 m³/ha): **5**
+- Extreme (> 5,000 m³/ha): **0**
 - Missing/zero selected area: **0**
 
 ## Interpretation
@@ -19,11 +19,6 @@ The portal labels `check`, `extreme`, and `missing` cases as **⚠ area check**.
 
 | File | Plan | Blocks | Selected ha | 10-yr volume | m³/ha | Check |
 |---|---|---:|---:|---:|---:|---|
-| W1601 | first_period | 1 | 0.05 | 13,320 | 284596.3 | extreme |
-| W2027 | first_period | 1 | 0.73 | 19,080 | 26042.3 | extreme |
-| W1612 | first_period | 1 | 4.25 | 27,340 | 6437.1 | extreme |
-| W1591 | first_period | 2 | 4.42 | 28,280 | 6391.5 | extreme |
-| W0307 | first_period | 2 | 3.63 | 19,000 | 5233.4 | extreme |
 | W0312 | first_period | 2 | 2.17 | 9,810 | 4529.0 | check |
 | W1903 | first_period | 1 | 3.61 | 11,030 | 3059.0 | check |
 | W1877 | first_period | 3 | 10.23 | 24,800 | 2425.3 | check |
@@ -44,14 +39,19 @@ The portal labels `check`, `extreme`, and `missing` cases as **⚠ area check**.
 | W1867 | first_period | 6 | 8.30 | 12,820 | 1545.2 | check |
 | W0460 | first_period | 5 | 12.06 | 18,400 | 1525.2 | check |
 | W2021 | first_period | 6 | 23.73 | 36,000 | 1517.1 | check |
+| W0339 | first_period | 3 | 11.86 | 16,910 | 1426.0 | check |
+| W1454 | first_period | 2 | 15.46 | 22,030 | 1424.7 | check |
+| W1856 | first_period | 2 | 10.84 | 15,110 | 1393.6 | check |
+| W0010 | first_period | 3 | 34.82 | 47,940 | 1376.9 | check |
+| W1698 | first_period | 5 | 40.94 | 56,170 | 1372.1 | check |
 
 ## Class counts
 
 | Class | Count |
 |---|---:|
-| ok | 723 |
+| ok | 728 |
 | check | 70 |
-| extreme | 5 |
+| extreme | 0 |
 | missing | 0 |
 
 Full CSV: [`FHOPS-AREA-AUDIT.csv`](FHOPS-AREA-AUDIT.csv).

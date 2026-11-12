@@ -1,10 +1,18 @@
 # Release notes
 
+## v0.9.0-rc6 — 2026-11-12
+
+Rebuilt the five extreme FHOPS area-check cases (W0307, W1591, W1601,
+W1612, W2027) with all compiled WS4 blocks. All five cleared the area check
+and retained zero sequencing violations. The audit now has 70 check cases,
+0 extreme cases, and 0 missing-area cases.
+
 ## v0.9.0-rc5 — 2026-11-12
 
 Added the FHOPS selected-area audit. The portal now labels compressed pilots
 with high period volume per selected hectare as **⚠ area check**. The audit
-found 71 check cases, 5 extreme cases, and no missing-area cases.
+found 70 check cases, 0 extreme cases, and no missing-area cases after the
+extreme-case rebuild.
 
 ## v0.9.0-rc4 — 2026-11-12
 
