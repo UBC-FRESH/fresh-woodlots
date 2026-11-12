@@ -4,6 +4,13 @@ Date: 2026-11-11
 Status: pilot / demo
 Scope: all active BC woodlot licences; 845 catalogued, 798 with public AAC.
 
+## 0. Release status
+
+The build-pipeline and portal QA are complete; the service remains a
+release candidate in demo mode. See
+[`RELEASE-READINESS.md`](RELEASE-READINESS.md) for the passed checks and the
+open access-mode decision.
+
 ## 1. Current deployment
 
 The portal is installed in the shared LXD container as

@@ -40,15 +40,21 @@ W0026 is deliberately a counter-example: applying the partial-cut v2 model to it
 requires about 4.3× the Proxy THLB. The v1 clearcut calibration is the credible
 one for W0026.
 
-## What this means
+## Decision
 
-- The calibration method must be chosen per plan, not globally.
-- v1 remains the default for the population until a plan's silviculture system is
-  known.
-- v2 is the right tool for partial-cut/thinning woodlots and should be selected
-  from the management plan or WLP.
-- The portal flags v1 factors outside a plausible range as **method check** so a
-  low-factor result is not presented as a land-base fact.
+- **v1 remains the population default.** The population audit found 157 of 798
+  v1 factors outside the 0.4–2.0 method-check range; those are data/method
+  limitations, not evidence for a global v2 switch.
+- **v2 is selected per plan.** Use it when the management plan or WLP documents
+  partial cutting or commercial thinning. W1832 is the proof case; W0026 is the
+  counter-example where v2 is implausible.
+- **Do not mass-run v2** without a silviculture assumption for every licence.
+- The portal flags v1 factors outside the 0.4–2.0 range as **method check** so a
+  low- or high-factor result is not presented as a land-base fact.
+
+The population audit is in
+[`CALIBRATION-AUDIT.md`](CALIBRATION-AUDIT.md); the release decision is in
+[`../RELEASE-READINESS.md`](../RELEASE-READINESS.md).
 
 ## Reproduce
 

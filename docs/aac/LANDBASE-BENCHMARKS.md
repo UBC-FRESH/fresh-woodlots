@@ -151,7 +151,10 @@ always more generous than a local plan; it can be lower.
 - These are different inventory vintages and local netdowns.
 - VRI area is not AFLB; the W1832 VRI area is gross forest area.
 - The W0007 report predates W4W 4.4 and uses Woodlot 3.
-- W1674 and W1832 WS4 builds were still pending when this benchmark was
-  written; their calibrations will be added to the register after build.
+- W1674 and W1832 are now in the 798-instance calibration register; their
+  benchmark values are the ones above.
 - Proxy THLB is a provincial strategic layer, not a substitute for a local
   management plan or statutory THLB.
+- The population calibration audit flags 157 of 798 v1 factors outside the
+  0.4–2.0 method-check range; see
+  [`CALIBRATION-AUDIT.md`](CALIBRATION-AUDIT.md).

@@ -24,10 +24,10 @@ journalctl -u freshwl-portal -f
 The unit uses the newer WS4 UI:
 
 ```text
-PYTHONPATH=/srv/shared-data/gep/ws4/ws4-public-demo:/srv/shared-data/gep/ws4/fresh-woodlots
+PYTHONPATH=/srv/shared-data/gep/ws4/ws4-public-demo:/srv/shared-data/gep/ws4/fresh-woodlots:/srv/shared-data/gep/ws4/fhops-ground-support:/srv/shared-data/gep/ws4/fhops-ground-support/src
 PUBLIC_READ_ONLY=0
 DEMO_MODE=1
-WS4_OVERVIEW_ZOOM=7
+WS4_OVERVIEW_ZOOM=0
 ```
 
 For public read-only hosting:

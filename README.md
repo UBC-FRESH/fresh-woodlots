@@ -25,8 +25,15 @@ The source of truth is the public BC data:
 
 - **845** active woodlot licences catalogued.
 - **798** have a public AAC value and are buildable.
+- **798 / 798** built, with FHOPS summaries, maps, timelines, theatre data, and
+  W4W v1 calibrations.
 - **47** are catalogued with **AAC pending** (not in the March 2026 public
   report yet).
+- Release-candidate QA: **0 failures** across six portal routes and five
+  required artifacts per built instance.
+- Calibration audit: **157 / 798** v1 factors flagged as **method check**
+  (outside 0.4–2.0); v1 remains the population default, with v2 selected per
+  documented partial-cut plan.
 - The three featured pilots are:
   - W0026 Chinook Woodlots (Campbell River)
   - W2023 Boomer Enterprises (Okanagan)
