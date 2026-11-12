@@ -1,5 +1,12 @@
 # Release notes
 
+## v0.9.0-rc8 — 2026-11-12
+
+Rebuilt the remaining 64 FHOPS area-check cases with all compiled WS4 blocks.
+All 798 instances now pass the selected-area audit (0 check, 0 extreme, 0
+missing). Median volume per selected hectare is 413.9 m³/ha; maximum is
+999.7 m³/ha.
+
 ## v0.9.0-rc7 — 2026-11-12
 
 Rebuilt the six FHOPS cases above 2,000 m³ per selected hectare (W0312, W1552,

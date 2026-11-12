@@ -18,6 +18,7 @@ import shutil
 import subprocess
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 import geopandas as gpd
@@ -198,6 +199,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--queue", type=Path, default=QUEUE_PATH)
     parser.add_argument("--only", action="append", default=None)
     parser.add_argument("--timeout", type=int, default=3600)
+    parser.add_argument("--jobs", type=int, default=1)
     args = parser.parse_args(argv)
     queue = json.loads(args.queue.read_text(encoding="utf-8"))
     wanted = set(args.only) if args.only else None
@@ -214,12 +216,35 @@ def main(argv: list[str] | None = None) -> int:
             raise SystemExit(f"unknown or unbuilt slugs: {sorted(missing)}")
     ok = 0
     failed = 0
-    for entry in entries:
-        slug = str(entry["slug"])
-        if rebuild(REPO_ROOT / "instances" / slug, entry, args.timeout):
-            ok += 1
-        else:
-            failed += 1
+    if args.jobs <= 1:
+        for entry in entries:
+            slug = str(entry["slug"])
+            if rebuild(REPO_ROOT / "instances" / slug, entry, args.timeout):
+                ok += 1
+            else:
+                failed += 1
+    else:
+        with ThreadPoolExecutor(max_workers=args.jobs) as pool:
+            futures = {
+                pool.submit(
+                    rebuild,
+                    REPO_ROOT / "instances" / str(entry["slug"]),
+                    entry,
+                    args.timeout,
+                ): str(entry["slug"])
+                for entry in entries
+            }
+            for future in as_completed(futures):
+                slug = futures[future]
+                try:
+                    success = future.result()
+                except Exception as error:  # pragma: no cover - defensive
+                    print(f"{slug}: rebuild raised {error}")
+                    success = False
+                if success:
+                    ok += 1
+                else:
+                    failed += 1
     print(f"all-block FHOPS rebuild: ok={ok} failed={failed}")
     return 1 if failed else 0
 

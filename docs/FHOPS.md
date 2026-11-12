@@ -54,14 +54,13 @@ The first-period pilots compress ten years of AAC into a short horizon. A
 population audit compares the period volume with the selected scheduled block
 area:
 
-- **64** instances are above 1,000 m³ per selected hectare;
+- **0** instances are above 1,000 m³ per selected hectare;
 - **0** are above 5,000 m³/ha;
 - no instance has a missing selected area.
 
-Those cases are labeled **⚠ area check** in the portal. The label is a
-screening prompt, not a yield result. The featured tactical plans now use all
-compiled WS4 blocks and generally sit near 90–120 m³/ha for the ten-year
-volume.
+All 70 flagged pilots were rebuilt with the all-block candidate pool. The
+portal now shows no **⚠ area check** cards. The audit remains in place so a
+future rebuild or data refresh can reintroduce the flag immediately.
 
 See [`FHOPS-AREA-AUDIT.md`](FHOPS-AREA-AUDIT.md) for the full table.
 
@@ -100,7 +99,9 @@ The six cases above 2,000 m³/ha were rebuilt next:
 | W1903 | 32 | 251.9 ha | 43.8 |
 
 All 11 rebuilt cases pass the area audit and keep zero sequencing violations.
-The remaining 64 check cases are in the 1,000–2,000 m³/ha range.
+The remaining 64 check cases were then rebuilt in a four-worker batch; all 798
+instances now pass the audit. The maximum is **999.7 m³/ha**, median
+**413.9 m³/ha**.
 
 ## Tree Lab
 

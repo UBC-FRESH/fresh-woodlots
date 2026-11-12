@@ -2,7 +2,7 @@
 
 Date: 2026-11-12  
 Status: **release candidate, live read-only behind Cloudflare Access; OTP allowlist test pending**  
-Tag: `v0.9.0-rc7`
+Tag: `v0.9.0-rc8`
 
 ## What passed
 
