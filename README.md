@@ -50,6 +50,13 @@ Sphinx documentation is published at:
 Source is in `docs/`; the GitHub Actions workflow at
 `.github/workflows/docs.yml` builds and deploys it with GitHub Pages.
 
+## Pilot packet
+
+- [Pilot brief](docs/PILOT-BRIEF.md)
+- [How to read the portal](docs/HOW-TO-READ.md) (also served at `/guide`)
+- [10-minute demo script](docs/DEMO-SCRIPT.md)
+- [Release notes](docs/RELEASE-NOTES.md)
+
 ## FHOPS pages
 
 Every built woodlot with a solved FHOPS pilot has a `/fhops/<slug>` page,

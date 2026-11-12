@@ -65,7 +65,7 @@ if len(rows) != 845:
 print(f"instances ok: {len(rows)} catalogued, {len(ready)} built")
 PY
 
-for path in / /about /terms /privacy /instance/wl-w0026/; do
+for path in / /about /guide /terms /privacy /instance/wl-w0026/; do
   fetch "$path"
   echo "ok $path"
 done

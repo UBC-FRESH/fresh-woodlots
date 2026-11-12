@@ -2,14 +2,17 @@ Woodlots BC Planning Portal
 ===========================
 
 A free, public-data planning portal for BC woodlot licences. The portal combines
-one WS4 strategic planning instance per woodlot with a first-period FHOPS
-operational pilot, a searchable public-data catalogue, and a scenario-based web
-UI.
+one WS4 strategic planning instance per woodlot with a FHOPS operational
+pilot, a searchable public-data catalogue, and a scenario-based web UI. The
+three featured pilots add ten-year tactical–operational plans.
 
 .. toctree::
    :maxdepth: 2
    :caption: Overview
 
+   PILOT-BRIEF
+   HOW-TO-READ
+   DEMO-SCRIPT
    overview
    project-brief
    architecture
@@ -45,6 +48,7 @@ UI.
    PUBLIC-HOSTING-PLAN
    CLOUDFLARE-ACCESS
    RELEASE-READINESS
+   RELEASE-NOTES
    QA-POPULATION
    WOODLOTS-HANDOFF
    deployment

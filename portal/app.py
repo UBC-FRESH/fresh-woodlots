@@ -435,7 +435,8 @@ SOURCES_HTML = """<!doctype html>
   are not redistributed by this portal.</p>
 
   <footer>UBC FRESH · Woodlots BC Planning Portal ·
-  <a href="/">portal home</a></footer>
+  <a href="/">portal home</a> ·
+  <a href="/guide">How to read this</a></footer>
 </main>
 </body>
 </html>"""
@@ -457,6 +458,12 @@ _LEGAL_TEMPLATE = """<!doctype html>
     h1 { font-size: clamp(2rem, 4vw, 2.8rem); margin: .4rem 0 1rem; }
     h2 { margin: 2rem 0 .5rem; }
     .lede { color: var(--muted); font-size: 1.05rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0;
+            background: #fff; font-size: .92rem; }
+    th, td { border: 1px solid var(--line); padding: .45rem .6rem;
+             text-align: left; vertical-align: top; }
+    th { background: #eef3ef; }
+    code { background: #eef3ef; border-radius: 4px; padding: .1rem .3rem; }
     footer { margin-top: 2.5rem; padding-top: 1rem;
              border-top: 1px solid var(--line); color: var(--muted);
              font-size: .85rem; }
@@ -469,6 +476,7 @@ _LEGAL_TEMPLATE = """<!doctype html>
   __BODY__
   <footer>UBC FRESH · Woodlots BC Planning Portal ·
   <a href="/about">Sources &amp; methods</a> ·
+  <a href="/guide">How to read this</a> ·
   <a href="/privacy">Privacy</a></footer>
 </main>
 </body>
@@ -565,6 +573,22 @@ async def privacy() -> HTMLResponse:
     return HTMLResponse(
         _LEGAL_TEMPLATE.replace("__TITLE__", "Privacy").replace(
             "__BODY__", PRIVACY_BODY
+        )
+    )
+
+
+@app.get("/guide", response_class=HTMLResponse)
+async def guide() -> HTMLResponse:
+    path = ROOT / "docs" / "HOW-TO-READ.md"
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail="guide is unavailable")
+    text = path.read_text(encoding="utf-8")
+    if text.startswith("# "):
+        text = text.split("\n", 1)[1].lstrip("\n")
+    body = MARKDOWN.render(text)
+    return HTMLResponse(
+        _LEGAL_TEMPLATE.replace("__TITLE__", "How to read this portal").replace(
+            "__BODY__", body
         )
     )
 
@@ -977,6 +1001,7 @@ async def landing() -> HTMLResponse:
   <footer>Not a statutory timber supply analysis. Model outputs are pilot
   scenarios; use professional judgment and the cited public sources.
   <a href="/about">Sources &amp; methods</a> ·
+  <a href="/guide">How to read this</a> ·
   <a href="/terms">Terms</a> ·
   <a href="/privacy">Privacy</a>.</footer>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
