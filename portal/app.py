@@ -836,9 +836,16 @@ async def landing() -> HTMLResponse:
     cards = "\n".join(_card(instance) for instance in featured + others)
     tree_lab_action = ""
     if TREELAB_MOUNTED:
+        tree_case = "w0026-61"
+        has_tree_run = (
+            ROOT / "treelab_runs" / tree_case / "demo-1" / "run.json"
+        ).is_file()
+        tree_query = f"?case={tree_case}" + (
+            "&run=demo-1" if has_tree_run else ""
+        )
         tree_lab_action = (
             '<a class="open secondary" '
-            'href="/treelab/?case=w0026-61&run=demo-1">'
+            f'href="/treelab/{tree_query}">'
             "Open Tree Lab 3D</a>"
         )
     return HTMLResponse(
