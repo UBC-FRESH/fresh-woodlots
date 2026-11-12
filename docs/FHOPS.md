@@ -65,6 +65,21 @@ volume.
 
 See [`FHOPS-AREA-AUDIT.md`](FHOPS-AREA-AUDIT.md) for the full table.
 
+### All-block proof case
+
+W2032 was rebuilt with all **132** compiled WS4 blocks instead of its original
+11.7 ha selected area:
+
+```text
+10-year volume: 37,000 m³
+selected area: 686.8 ha
+volume / selected ha: 53.9 m³/ha
+```
+
+The **area check** warning cleared, and the page now shows a plausible
+first-period footprint. This is the proof case for rebuilding other flagged
+pilots; it does not change their summaries yet.
+
 ## Tree Lab
 
 `/treelab/` mounts the experimental FHOPS Tree Lab sandbox. The three featured

@@ -31764,16 +31764,16 @@
         "status": "built",
         "summary": {
           "aac_m3": 3700.0,
-          "area_check": "check",
-          "area_check_note": "volume per selected hectare is high",
-          "completed_blocks": 5.0,
-          "elapsed_sec": 95.6,
+          "area_check": "ok",
+          "area_check_note": "",
+          "completed_blocks": 132.0,
+          "elapsed_sec": 0.0,
           "horizon_days": 450,
-          "makespan_day": 301.0,
-          "period_volume_per_ha": 3174.1,
+          "makespan_day": 436.0,
+          "period_volume_per_ha": 53.9,
           "rate_m3_per_day": 250.0,
           "schema_version": 1,
-          "selected_area_ha": 11.66,
+          "selected_area_ha": 686.85,
           "sequencing_violation_count": 0.0,
           "total_production_m3": 37000.0
         }

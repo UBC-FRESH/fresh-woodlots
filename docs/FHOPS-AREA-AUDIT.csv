@@ -767,7 +767,7 @@ W2023,wl-w2023,tactical_operational,120,635.28,58330.0,91.8,ok,
 W2024,wl-w2024,first_period,2,63.78,30000.0,470.4,ok,
 W2027,wl-w2027,first_period,1,0.73,19080.0,26042.3,extreme,volume per selected hectare is extreme
 W2031,wl-w2031,first_period,27,180.85,28900.0,159.8,ok,
-W2032,wl-w2032,first_period,5,11.66,37000.0,3174.1,check,volume per selected hectare is high
+W2032,wl-w2032,first_period,132,686.85,37000.0,53.9,ok,
 W2034,wl-w2034,first_period,2,17.22,13090.0,760.3,ok,
 W2044,wl-w2044,first_period,2,29.08,31800.0,1093.6,check,volume per selected hectare is high
 W2045,wl-w2045,first_period,4,35.32,22340.0,632.5,ok,

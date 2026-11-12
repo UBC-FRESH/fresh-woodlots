@@ -3,9 +3,9 @@
 The first-period FHOPS pilots compress ten years of AAC into a short horizon. Volume per selected scheduled hectare is a screening check, not a yield-table validation.
 
 - Instances audited: **798**
-- Median volume / selected ha: **450.4 m³/ha**
-- 90th percentile: **983.4 m³/ha**
-- Check (> 1,000 m³/ha): **71**
+- Median volume / selected ha: **450.1 m³/ha**
+- 90th percentile: **980.9 m³/ha**
+- Check (> 1,000 m³/ha): **70**
 - Extreme (> 5,000 m³/ha): **5**
 - Missing/zero selected area: **0**
 
@@ -25,7 +25,6 @@ The portal labels `check`, `extreme`, and `missing` cases as **⚠ area check**.
 | W1591 | first_period | 2 | 4.42 | 28,280 | 6391.5 | extreme |
 | W0307 | first_period | 2 | 3.63 | 19,000 | 5233.4 | extreme |
 | W0312 | first_period | 2 | 2.17 | 9,810 | 4529.0 | check |
-| W2032 | first_period | 5 | 11.66 | 37,000 | 3174.1 | check |
 | W1903 | first_period | 1 | 3.61 | 11,030 | 3059.0 | check |
 | W1877 | first_period | 3 | 10.23 | 24,800 | 2425.3 | check |
 | W1841 | first_period | 1 | 7.30 | 15,220 | 2085.9 | check |
@@ -44,13 +43,14 @@ The portal labels `check`, `extreme`, and `missing` cases as **⚠ area check**.
 | W1672 | first_period | 3 | 21.99 | 34,000 | 1546.4 | check |
 | W1867 | first_period | 6 | 8.30 | 12,820 | 1545.2 | check |
 | W0460 | first_period | 5 | 12.06 | 18,400 | 1525.2 | check |
+| W2021 | first_period | 6 | 23.73 | 36,000 | 1517.1 | check |
 
 ## Class counts
 
 | Class | Count |
 |---|---:|
-| ok | 722 |
-| check | 71 |
+| ok | 723 |
+| check | 70 |
 | extreme | 5 |
 | missing | 0 |
 
