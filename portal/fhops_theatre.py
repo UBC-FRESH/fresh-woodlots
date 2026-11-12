@@ -7,20 +7,21 @@ import html
 THEATRE_CSS = """<style>
   :root { color-scheme: dark; --ink: #e2e8f0; --muted: #94a3b8;
            --line: rgba(148, 163, 184, .22);
-           --panel: rgba(8, 18, 28, .86); --accent: #f97316; }
+           --panel: #08121c; --accent: #f97316; }
   * { box-sizing: border-box; }
   html, body { height: 100%; margin: 0; }
   body { background: #050b12; color: var(--ink);
          font: 15px/1.45 system-ui, -apple-system, Segoe UI, sans-serif;
          overflow: hidden; }
-  #theatre-canvas { position: fixed; inset: 0; width: 100%; height: 100%;
-                    display: block; }
+  #theatre-canvas { position: fixed; inset: 0; z-index: 0;
+                    width: 100%; height: 100%; display: block;
+                    background: #050b12; }
   .theatre-head { position: fixed; z-index: 5; top: 1rem; left: 1rem;
                   right: 1rem; display: flex; justify-content: space-between;
                   gap: 1rem; align-items: flex-start; pointer-events: none; }
   .theatre-title { background: var(--panel); border: 1px solid var(--line);
                    border-radius: 14px; padding: .75rem 1rem;
-                   backdrop-filter: blur(10px); pointer-events: auto; }
+                   pointer-events: auto; }
   .theatre-kicker { margin: 0 0 .2rem; color: var(--accent);
                     font-size: .7rem; font-weight: 800; letter-spacing: .12em;
                     text-transform: uppercase; }
@@ -31,12 +32,12 @@ THEATRE_CSS = """<style>
   .theatre-actions a, .theatre-actions select { border: 1px solid var(--line);
       background: var(--panel); color: var(--ink); border-radius: 10px;
       padding: .55rem .8rem; text-decoration: none; font: inherit;
-      font-weight: 700; cursor: pointer; backdrop-filter: blur(10px); }
+      font-weight: 700; cursor: pointer; }
   .theatre-actions a:hover { border-color: #64748b; }
   .theatre-panel { position: fixed; z-index: 5; left: 1rem; right: 1rem;
                    bottom: 1rem; background: var(--panel);
                    border: 1px solid var(--line); border-radius: 16px;
-                   padding: .85rem 1rem; backdrop-filter: blur(12px); }
+                   padding: .85rem 1rem; }
   .theatre-controls { display: flex; align-items: center; gap: .65rem;
                       flex-wrap: wrap; }
   .theatre-controls button, .theatre-controls select {
@@ -51,7 +52,7 @@ THEATRE_CSS = """<style>
   .theatre-legend { position: fixed; z-index: 4; right: 1rem; bottom: 8.2rem;
                     background: var(--panel); border: 1px solid var(--line);
                     border-radius: 12px; padding: .65rem .8rem;
-                    backdrop-filter: blur(10px); font-size: .76rem; }
+                    font-size: .76rem; }
   .theatre-legend div { display: flex; align-items: center; gap: .4rem;
                         margin: .25rem 0; }
   .swatch { width: .7rem; height: .7rem; border-radius: 2px;
