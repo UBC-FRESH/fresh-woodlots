@@ -1,17 +1,17 @@
 # Woodlots BC portal hosting plan
 
-Date: 2026-11-11
-Status: pilot / demo
+Date: 2026-11-12
+Status: release candidate / read-only, Access-gated
 Scope: all active BC woodlot licences; 845 catalogued, 798 with public AAC.
 
 ## 0. Release status
 
 The build-pipeline and portal QA are complete. The container service is now
 **public read-only mode** (`PUBLIC_READ_ONLY=1`, `DEMO_MODE=0`) with
-write requests rejected at the portal boundary. The remaining external step is
-the root-host DNS/ingress and Cloudflare Access application for
-`fresh-woodlots.01101.dev`; see
-[`CLOUDFLARE-ACCESS.md`](CLOUDFLARE-ACCESS.md).
+write requests rejected at the portal boundary. The hostname
+`https://fresh-woodlotsbc.01101.dev` resolves and is behind Cloudflare Access
+(unauthenticated requests return **302**). The remaining check is authenticated
+origin verification; see [`CLOUDFLARE-ACCESS.md`](CLOUDFLARE-ACCESS.md).
 
 ## 1. Current deployment
 
@@ -43,11 +43,16 @@ ports.
 
 ## 2. Public hostname
 
-Proposed hostname: `https://fresh-woodlots.01101.dev`.
+Hostname: `https://fresh-woodlotsbc.01101.dev`.
 
-The root host mapping (nginx / LXD proxy / Cloudflare Tunnel) is outside this
-container and must point to container port **8795**. Until that is changed, use
-the container-local URL or a Cloudflare Access service token.
+The hostname resolves and has a Cloudflare Access application. An
+unauthenticated request returns **302** to
+`ubc-fresh.cloudflareaccess.com`. The root host mapping (nginx / LXD proxy /
+Cloudflare Tunnel) must point to container port **8795**; authenticated origin
+verification is still pending.
+
+For local checks, use `http://127.0.0.1:8795/` or a Cloudflare Access service
+token.
 
 ## 3. Read-only public mode
 

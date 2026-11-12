@@ -66,14 +66,13 @@ See [`aac/CALIBRATION-AUDIT.md`](aac/CALIBRATION-AUDIT.md) and
    PUBLIC_READ_ONLY=1
    DEMO_MODE=0
    ```
-   The remaining step is the root-host DNS/ingress and Cloudflare Access
-   application for `fresh-woodlots.01101.dev`. See
-   [`CLOUDFLARE-ACCESS.md`](CLOUDFLARE-ACCESS.md). The portal is not yet
-   reachable at that hostname.
+   The hostname and Cloudflare Access application exist, but authenticated
+   origin verification is still pending. See
+   [`CLOUDFLARE-ACCESS.md`](CLOUDFLARE-ACCESS.md).
 
-2. **Public hostname.** Proposed: `https://fresh-woodlots.01101.dev`.
-   The container-local URL is `http://127.0.0.1:8795/`. The hostname did not
-   resolve from inside the container at the time of this check.
+2. **Public hostname.** `https://fresh-woodlotsbc.01101.dev` resolves and
+   returns a **302** to `ubc-fresh.cloudflareaccess.com` when unauthenticated.
+   The container-local URL is `http://127.0.0.1:8795/`.
 
 3. **Calibration presentation.** Decide whether method-check cards remain
    visible with warnings, or whether extreme cases are hidden from summary
@@ -94,8 +93,9 @@ See [`aac/CALIBRATION-AUDIT.md`](aac/CALIBRATION-AUDIT.md) and
 - [x] docs published;
 - [x] calibration method decision documented;
 - [x] portal switched to read-only and write guard verified;
-- [ ] root-host DNS/ingress and Cloudflare Access application configured;
-- [ ] Access-protected public URL verified;
+- [x] hostname resolves and Cloudflare Access returns 302;
+- [ ] authenticated origin verified as this container's 8795 service;
+- [ ] service-token health check through Access;
 - [ ] Access removed after public review (if approved);
 - [ ] release tag updated after the access decision.
 

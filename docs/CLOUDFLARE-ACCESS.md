@@ -1,7 +1,7 @@
 # Cloudflare Access handoff
 
-Status: **blocked outside the container**  
-Target hostname: `https://fresh-woodlots.01101.dev`
+Status: **Access app verified; origin verification pending**  
+Hostname: `https://fresh-woodlotsbc.01101.dev`
 
 The container is ready:
 
@@ -12,8 +12,14 @@ DEMO_MODE=0
 non-GET/HEAD/OPTIONS -> 403
 ```
 
-The remaining work is on the root host and in Cloudflare. The container does
-not have root-host SSH access or a Cloudflare API token.
+The hostname resolves and the Cloudflare Access application exists. An
+unauthenticated request returns **302** to
+`ubc-fresh.cloudflareaccess.com` with app title **“Log in to
+fresh-woodlotsbc”**. The remaining check is whether the authenticated origin is
+this container's **8795** service.
+
+The container does not have root-host SSH access or a Cloudflare API token, so
+it cannot inspect the origin or create a service token.
 
 ## 1. Root-host ingress
 
@@ -28,9 +34,10 @@ browser
                       └─ 127.0.0.1:8795
 ```
 
-Add `fresh-woodlots.01101.dev` to the root-host ingress, pointing at the
-container's **8795** port. The existing `fresh-bccfa.01101.dev` route is the
-template; do not change its upstream.
+Confirm that the existing `fresh-woodlotsbc.01101.dev` route points at the
+container's **8795** port. The hostname already resolves and has an Access
+application; the origin needs authentication to verify. The existing
+`fresh-bccfa.01101.dev` route is the template; do not change its upstream.
 
 Two equivalent deployment points are possible:
 
@@ -57,7 +64,7 @@ proxy pattern used by BCCFA.
 Create a Zero Trust Access application for:
 
 ```text
-fresh-woodlots.01101.dev
+fresh-woodlotsbc.01101.dev
 ```
 
 Recommended first policy:
@@ -85,7 +92,7 @@ Do not commit the API token. Store it on the root host mode `600`.
 Unauthenticated:
 
 ```bash
-curl -sS -D - -o /dev/null https://fresh-woodlots.01101.dev/ | head
+curl -sS -D - -o /dev/null https://fresh-woodlotsbc.01101.dev/ | head
 ```
 
 Expected: **302** to `ubc-fresh.cloudflareaccess.com`, not the portal.
@@ -95,7 +102,7 @@ Authenticated service-token check:
 ```bash
 CF_ACCESS_CLIENT_ID=... \
 CF_ACCESS_CLIENT_SECRET=... \
-scripts/healthcheck.sh https://fresh-woodlots.01101.dev
+scripts/healthcheck.sh https://fresh-woodlotsbc.01101.dev
 ```
 
 Expected:
@@ -134,9 +141,10 @@ Do not remove Access before the public review is signed off.
 
 ## 5. What the container cannot do
 
-- edit the root-host tunnel or nginx configuration;
-- create the Cloudflare Access application without an API token;
-- add DNS for `fresh-woodlots.01101.dev` without the root host or Cloudflare
-  account access.
+- inspect or change the root-host tunnel/nginx origin;
+- inspect or change the Cloudflare Access application without an API token;
+- create a service token for an authenticated health check;
+- verify that the authenticated origin is this container's 8795 service.
 
 Those steps require the root-host operator or a scoped Cloudflare API token.
+The unauthenticated 302 is verified; the origin is not.
