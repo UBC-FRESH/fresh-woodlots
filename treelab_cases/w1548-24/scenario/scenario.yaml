@@ -14,7 +14,7 @@ objective_weights:
 tree_inventory:
   inventory_id: w1548-24-synthetic
   inventory_sha256: 8742d9ad55292bc95b5fff70529cce391d6420dc2aa716f36e83f0d3860d7338
-  metadata_sha256: a8f1159e4619f283275e879e2a726f7ca7856fd6e08eae0c9cc12f32b289ea30
+  metadata_sha256: 9de36bbc6bfd6ad2fc92d8137e75d9d528f472471d447902e193a00a82b576cd
   inventory_path: ../tree_inventory/tree_inventory.csv
   metadata_path: ../tree_inventory/tree_inventory.meta.json
   crs: EPSG:3005

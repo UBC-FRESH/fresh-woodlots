@@ -1,7 +1,7 @@
 {
   "schema_version": "fhops.tree.inventory.v1",
   "inventory_id": "w1548-24-synthetic",
-  "generated_utc": "2026-11-12T01:16:16.372585+00:00",
+  "generated_utc": "2026-11-12T01:24:07.140314+00:00",
   "source_id": "synthetic-w1548-24",
   "producer": "Woodlots BC demo tree-scale sample",
   "method": "Synthetic visual tree layout from the FHOPS block geometry.",
