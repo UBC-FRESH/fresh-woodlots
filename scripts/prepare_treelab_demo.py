@@ -29,9 +29,17 @@ FHops_SUPPORT = Path(
         "/srv/shared-data/gep/ws4/fhops-ground-support",
     )
 )
-for _path in (FHops_SUPPORT, FHops_SUPPORT / "src"):
+_support_paths = [FHops_SUPPORT, FHops_SUPPORT / "src"]
+for _path in _support_paths:
     if _path.is_dir() and str(_path) not in sys.path:
         sys.path.insert(0, str(_path))
+# The Tree Lab runner shells out to ``python -m fhops.cli.main``; make sure the
+# child process sees the same FHOPS support checkout.
+_existing_pythonpath = os.environ.get("PYTHONPATH")
+os.environ["PYTHONPATH"] = os.pathsep.join(
+    [str(path) for path in _support_paths]
+    + ([_existing_pythonpath] if _existing_pythonpath else [])
+)
 
 
 def main() -> int:
