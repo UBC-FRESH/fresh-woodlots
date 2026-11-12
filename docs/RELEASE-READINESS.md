@@ -2,7 +2,7 @@
 
 Date: 2026-11-12  
 Status: **release candidate, read-only models plus Access-gated LLM assistant; OTP allowlist test pending**
-Tag: `v0.9.0-rc9`
+Tag: `v0.9.0-rc10`
 
 ## What passed
 
@@ -21,6 +21,7 @@ Tag: `v0.9.0-rc9`
 | Portal healthcheck | passed |
 | Read-only smoke test | passed; write endpoints return **403**, except chat |
 | LLM assistant | enabled for authenticated Access users; API chat test passed |
+| Main-page Ask button | opens W0026 with the assistant panel expanded |
 | Public hostname | `fresh-woodlotsbc.01101.dev`, Access **302** unauthenticated |
 | Authenticated origin | confirmed by operator |
 | OTP email allowlist | **pending a real Woodlots BC user** |

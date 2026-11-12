@@ -923,6 +923,12 @@ async def landing() -> HTMLResponse:
     ready = sum(1 for item in instances if item.ready)
     pending_aac = sum(1 for item in instances if item.aac_m3 is None)
     cards = "\n".join(_card(instance) for instance in featured + others)
+    assistant_action = ""
+    if LLM_ASSISTANT:
+        assistant_action = (
+            '<a class="open secondary" '
+            'href="/instance/wl-w0026/?assistant=1">+ Ask</a>'
+        )
     tree_lab_action = ""
     if TREELAB_MOUNTED:
         tree_case = "w0026-61"
@@ -1017,6 +1023,7 @@ async def landing() -> HTMLResponse:
     have a formal ten-year tactical–operational plan.</p>
     <div class="hero-actions">
       <a class="open" href="/fhops/wl-w0026">Open W0026 10-year plan</a>
+      {assistant_action}
       {tree_lab_action}
     </div>
   </header>

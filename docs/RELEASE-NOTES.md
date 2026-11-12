@@ -1,5 +1,11 @@
 # Release notes
 
+## v0.9.0-rc10 — 2026-11-12
+
+Added a **+ Ask** button to the portal landing page. It opens W0026 with the
+WS4 assistant panel already open. The assistant remains Access-gated and is
+the only non-GET exception to the read-only guard.
+
 ## v0.9.0-rc9 — 2026-11-12
 
 - Removed the chaotic dotted machine tracks from the 3D harvest studio.

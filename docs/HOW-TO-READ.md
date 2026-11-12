@@ -51,7 +51,8 @@ It is not a replacement for the licence's management plan.
 
 ## Ask assistant
 
-The WS4 model page has an **Ask** control. It is an LLM assistant with access
+The portal landing page has a **+ Ask** button; it opens W0026 with the
+assistant panel expanded. The WS4 model page also has an **Ask** control. It is an LLM assistant with access
 to the selected instance and the OpenCode tools. Treat it as an authenticated
 pilot assistant, not an authoritative interpreter of the model.
 
