@@ -21,6 +21,7 @@ from markdown_it import MarkdownIt
 from ws4.web.app import create_app
 
 from . import fhops_page as fhops_page_module
+from .assistant_panel import render_assistant
 from .fhops_page import _fhops_page
 from .fhops_studio import render_studio
 from .fhops_theatre import render_theatre
@@ -924,11 +925,13 @@ async def landing() -> HTMLResponse:
     pending_aac = sum(1 for item in instances if item.aac_m3 is None)
     cards = "\n".join(_card(instance) for instance in featured + others)
     assistant_action = ""
+    assistant_html = ""
     if LLM_ASSISTANT:
         assistant_action = (
-            '<a class="open secondary" '
-            'href="/instance/wl-w0026/?assistant=1">+ Ask</a>'
+            '<button id="portal-ask" class="open secondary" type="button" '
+            'aria-expanded="false">+ Ask</button>'
         )
+        assistant_html = render_assistant()
     tree_lab_action = ""
     if TREELAB_MOUNTED:
         tree_case = "w0026-61"
@@ -966,6 +969,7 @@ async def landing() -> HTMLResponse:
     .lede {{ color: var(--muted); max-width: 65ch; font-size: 1.05rem; }}
     .hero-actions {{ display: flex; flex-wrap: wrap; gap: .6rem;
                      margin-top: 1.2rem; }}
+    .hero-actions button.open {{ font: inherit; cursor: pointer; }}
     main {{ max-width: 1100px; margin: 0 auto; padding: 0 1.5rem 3rem; }}
     .map-wrap {{ background: #fff; border: 1px solid var(--line);
                  border-radius: 14px; overflow: hidden; margin-bottom: 1rem; }}
@@ -1049,6 +1053,7 @@ async def landing() -> HTMLResponse:
   <a href="/privacy">Privacy</a>.</footer>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="/static/map.js"></script>
+  {assistant_html}
 </body>
 </html>"""
     )

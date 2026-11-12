@@ -1,10 +1,17 @@
 # Release notes
 
+## v0.9.0-rc11 — 2026-11-12
+
+The landing-page **+ Ask** button now opens the portal-native assistant panel
+in place; it no longer navigates to a WS4 instance. The panel calls the W0026
+chat endpoint and keeps the conversation on the landing page.
+
 ## v0.9.0-rc10 — 2026-11-12
 
-Added a **+ Ask** button to the portal landing page. It opens W0026 with the
-WS4 assistant panel already open. The assistant remains Access-gated and is
-the only non-GET exception to the read-only guard.
+Added a **+ Ask** button to the portal landing page. It opens a portal-native
+assistant panel without leaving the landing page or opening a WS4 instance.
+The assistant remains Access-gated and is the only non-GET exception to the
+read-only guard.
 
 ## v0.9.0-rc9 — 2026-11-12
 
